@@ -1,72 +1,92 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
-/* ============================================================
-   METROSCAN AI — Global Styles & Design Tokens
-   ============================================================
-   Person 1 (Frontend Lead) owns this file.
-   Uses Tailwind v4 CSS-first configuration.
-   ============================================================ */
-
 @theme {
-  /* --- Brand Colors --- */
-  --color-primary: #6366f1;
-  --color-primary-light: #818cf8;
-  --color-primary-dark: #4f46e5;
-
-  --color-surface: #0f172a;
-  --color-surface-light: #1e293b;
-  --color-surface-lighter: #334155;
-
-  --color-accent: #06b6d4;
-  --color-accent-light: #22d3ee;
-
-  /* --- Status Colors --- */
-  --color-compliant: #10b981;
-  --color-review: #f59e0b;
-  --color-violation: #ef4444;
-
-  /* --- Typography --- */
-  --font-sans: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
-
-  /* --- Spacing --- */
-  --spacing-page: 1.5rem;
+  --color-primary: #50665B;
+  --color-primary-light: #6A8577;
+  --color-primary-dark: #37473F;
+  
+  --color-sidebar: #171A19;
+  --color-canvas: #F7F7F9;
+  --color-card: #FFFFFF;
+  
+  --color-border-subtle: #E2E8F0;
+  --color-border-strong: #CBD5E1;
+  
+  --color-text-primary: #0F172A;
+  --color-text-secondary: #475569;
+  --color-text-muted: #94A3B8;
+  
+  --color-status-ok-bg: #D1FAE5;
+  --color-status-ok-text: #065F46;
+  --color-status-ok-border: #A7F3D0;
+  
+  --color-status-review-bg: #FEF3C7;
+  --color-status-review-text: #92400E;
+  --color-status-review-border: #FDE68A;
+  
+  --color-status-err-bg: #FEE2E2;
+  --color-status-err-text: #991B1B;
+  --color-status-err-border: #FECACA;
+  
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
-/* --- Base resets --- */
 * {
-  margin: 0;
-  padding: 0;
   box-sizing: border-box;
 }
 
 body {
   font-family: var(--font-sans);
-  background: var(--color-surface);
-  color: #e2e8f0;
-  min-height: 100vh;
+  background-color: var(--color-canvas);
+  color: var(--color-text-secondary);
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.5;
 }
 
-/* --- Scrollbar styling --- */
-::-webkit-scrollbar {
-  width: 6px;
-}
-::-webkit-scrollbar-track {
-  background: var(--color-surface);
-}
-::-webkit-scrollbar-thumb {
-  background: var(--color-surface-lighter);
-  border-radius: 3px;
+select {
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 1em;
 }
 
-/* --- Glassmorphism utility --- */
-.glass {
-  background: rgba(30, 41, 59, 0.7);
-  backdrop-filter: blur(16px);
-  border: 1px solid rgba(99, 102, 241, 0.15);
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.25rem 0.625rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1;
+  border: 1px solid transparent;
 }
 
-/* --- Tier badge utilities --- */
-.tier-likely_compliant { background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); }
-.tier-needs_review     { background: rgba(245, 158, 11, 0.15); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3); }
-.tier-likely_violation { background: rgba(239, 68, 68, 0.15);  color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); }
+.chip-compliant {
+  background-color: var(--color-status-ok-bg);
+  border-color: var(--color-status-ok-border);
+  color: var(--color-status-ok-text);
+}
+
+.chip-review {
+  background-color: var(--color-status-review-bg);
+  border-color: var(--color-status-review-border);
+  color: var(--color-status-review-text);
+}
+
+.chip-violation {
+  background-color: var(--color-status-err-bg);
+  border-color: var(--color-status-err-border);
+  color: var(--color-status-err-text);
+}
+
+button {
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+button:active {
+  transform: scale(0.98);
+}

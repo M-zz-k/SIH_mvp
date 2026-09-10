@@ -1,81 +1,56 @@
-/**
- * METROSCAN AI — App Router
- *
- * Person 1 (Frontend Lead) owns this file.
- * Defines the route structure and top-level layout.
- *
- * Routes:
- *   /           → Login page
- *   /upload     → Upload page (single + bulk)
- *   /results    → Results detail page (renders most recent or by ID)
- *   /repository → Repository / Search page
- */
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 
-import { Routes, Route, NavLink, useLocation } from 'react-router-dom'
-import LoginPage from './pages/LoginPage.jsx'
-import UploadPage from './pages/UploadPage.jsx'
-import ResultsPage from './pages/ResultsPage.jsx'
-import RepositoryPage from './pages/RepositoryPage.jsx'
+import { AppLayout } from './components/Layout';
+import LoginPage from './pages/LoginPage';
+import DashboardPage from './pages/DashboardPage';
+import BulkUploadPage from './pages/BulkUploadPage';
+import ScanPage from './pages/ScanPage';
+import InspectionPage from './pages/InspectionPage';
+import RepositoryPage from './pages/RepositoryPage';
+import AnalyticsPage from './pages/AnalyticsPage';
+import SettingsPage from './pages/SettingsPage';
 
 function App() {
-  const location = useLocation()
-  const isLoginPage = location.pathname === '/'
+  const [userRole, setUserRole] = useState(localStorage.getItem('userRole'));
+  const location = useLocation();
+
+  // Route protection
+  useEffect(() => {
+    const role = localStorage.getItem('userRole');
+    setUserRole(role);
+  }, [location.pathname]);
+
+  if (!userRole && location.pathname !== '/login') {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (location.pathname === '/login') {
+    return <LoginPage onLogin={(role) => {
+      localStorage.setItem('userRole', role);
+      setUserRole(role);
+    }} />;
+  }
 
   return (
-    <div className="min-h-screen flex flex-col">
-      {/* Navigation — hidden on login page */}
-      {!isLoginPage && (
-        <nav className="glass sticky top-0 z-50 px-6 py-3 flex items-center gap-8">
-          <div className="flex items-center gap-3 mr-8">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white font-bold text-sm">
-              M
-            </div>
-            <span className="text-lg font-bold tracking-tight bg-gradient-to-r from-primary-light to-accent bg-clip-text text-transparent">
-              METROSCAN AI
-            </span>
-          </div>
-
-          {[
-            { to: '/upload', label: '📤 Upload' },
-            { to: '/results', label: '📊 Results' },
-            { to: '/repository', label: '🔍 Repository' },
-          ].map(({ to, label }) => (
-            <NavLink
-              key={to}
-              to={to}
-              className={({ isActive }) =>
-                `px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                  isActive
-                    ? 'bg-primary/20 text-primary-light'
-                    : 'text-slate-400 hover:text-white hover:bg-white/5'
-                }`
-              }
-            >
-              {label}
-            </NavLink>
-          ))}
-
-          <button
-            onClick={() => window.location.href = '/'}
-            className="ml-auto text-sm text-slate-500 hover:text-slate-300 transition-colors cursor-pointer"
-          >
-            Logout
-          </button>
-        </nav>
-      )}
-
-      {/* Main content */}
-      <main className="flex-1">
-        <Routes>
-          <Route path="/" element={<LoginPage />} />
-          <Route path="/upload" element={<UploadPage />} />
-          <Route path="/results" element={<ResultsPage />} />
-          <Route path="/results/:id" element={<ResultsPage />} />
-          <Route path="/repository" element={<RepositoryPage />} />
-        </Routes>
-      </main>
-    </div>
-  )
+    <AppLayout userRole={userRole}>
+      <Routes>
+        <Route path="/dashboard" element={<DashboardPage />} />
+        <Route path="/bulk-upload" element={<BulkUploadPage />} />
+        <Route path="/scan" element={<ScanPage />} />
+        <Route path="/inspection/:id" element={<InspectionPage />} />
+        <Route path="/repository" element={<RepositoryPage />} />
+        <Route path="/analytics" element={<AnalyticsPage />} />
+        
+        {/* Unimplemented / Stub routes */}
+        <Route path="/legal" element={<div className="p-10 text-center font-bold text-slate-500 text-sm tracking-widest uppercase">Legal Decisions Vault (Pending API)</div>} />
+        <Route path="/statutory" element={<div className="p-10 text-center font-bold text-slate-500 text-sm tracking-widest uppercase">Statutory Rules Configurator (Pending API)</div>} />
+        <Route path="/settings" element={<SettingsPage />} />
+        
+        <Route path="*" element={<Navigate to="/dashboard" replace />} />
+      </Routes>
+    </AppLayout>
+  );
 }
 
-export default App
+export default App;
