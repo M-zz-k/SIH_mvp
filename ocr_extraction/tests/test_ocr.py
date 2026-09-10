@@ -118,19 +118,19 @@ class TestOCRExtractionModule(unittest.TestCase):
         ]
 
         mrp_res = extract_mrp(sample_blocks)
-        self.assertEqual(mrp_res["status"], "detected")
+        self.assertIn(mrp_res["status"], ["present", "detected"])
         self.assertIn("150.00", mrp_res["value"])
 
         qty_res = extract_net_quantity(sample_blocks)
-        self.assertEqual(qty_res["status"], "detected")
+        self.assertIn(qty_res["status"], ["present", "detected"])
         self.assertEqual(qty_res["value"], "500 g")
 
         mfg_res = extract_manufacturer(sample_blocks)
-        self.assertEqual(mfg_res["status"], "detected")
+        self.assertIn(mfg_res["status"], ["present", "detected"])
         self.assertIn("Tata Chemicals", mfg_res["value"])
 
         date_res = extract_date_declaration(sample_blocks)
-        self.assertEqual(date_res["status"], "detected")
+        self.assertIn(date_res["status"], ["present", "detected"])
         self.assertIn("Best Before 12 Months", date_res["value"])
 
     def test_06_low_confidence_handling(self):
@@ -139,7 +139,7 @@ class TestOCRExtractionModule(unittest.TestCase):
             {"text": "MRP ₹50.00", "bbox": [10, 10, 50, 20], "confidence": 0.45},
         ]
         mrp_res = extract_mrp(low_conf_blocks, min_confidence=0.6)
-        self.assertEqual(mrp_res["status"], "low_confidence")
+        self.assertIn(mrp_res["status"], ["unclear", "low_confidence"])
         self.assertEqual(mrp_res["confidence"], 0.45)
 
     def test_07_extract_declarations_single(self):
@@ -166,8 +166,8 @@ class TestOCRExtractionModule(unittest.TestCase):
         self.assertEqual(len(results), 3)
 
         # First two should succeed
-        self.assertIn(results[0]["mrp"]["status"], ["detected", "low_confidence"])
-        self.assertIn(results[1]["mrp"]["status"], ["detected", "low_confidence"])
+        self.assertIn(results[0]["mrp"]["status"], ["present", "detected", "unclear", "low_confidence"])
+        self.assertIn(results[1]["mrp"]["status"], ["present", "detected", "unclear", "low_confidence"])
 
         # Third should have failed status gracefully
         self.assertEqual(results[2]["status"], "extraction_failed")

@@ -71,15 +71,27 @@ DATE_PATTERNS = [
 
 
 # ---------------------------------------------------------------------------
-# Helper: Determine Detection Status
+# Helpers: BoundingBox & Status Normalization
 # ---------------------------------------------------------------------------
 
 def _resolve_status(found: bool, confidence: float, min_confidence: float = 0.6) -> str:
+    """Map detection status to shared contract FieldStatus values ('present', 'unclear', 'missing')."""
     if not found:
-        return "not_detected"
+        return "missing"
     if confidence < min_confidence:
-        return "low_confidence"
-    return "detected"
+        return "unclear"
+    return "present"
+
+
+def _format_bbox(bbox: Optional[Any]) -> Optional[Dict[str, int]]:
+    """Convert [x, y, w, h] list or tuple into Pydantic-compatible BoundingBox dict {'x': x, 'y': y, 'w': w, 'h': h}."""
+    if not bbox:
+        return None
+    if isinstance(bbox, dict):
+        return bbox
+    if isinstance(bbox, (list, tuple)) and len(bbox) >= 4:
+        return {"x": int(bbox[0]), "y": int(bbox[1]), "w": int(bbox[2]), "h": int(bbox[3])}
+    return None
 
 
 # ---------------------------------------------------------------------------
@@ -91,7 +103,7 @@ def extract_mrp(blocks: List[Dict[str, Any]], min_confidence: float = 0.6) -> Di
     for block in blocks:
         text = block.get("text", "")
         confidence = float(block.get("confidence", 0.0))
-        bbox = block.get("bbox")
+        raw_bbox = block.get("bbox")
 
         for pattern in MRP_PATTERNS:
             match = pattern.search(text)
@@ -100,17 +112,19 @@ def extract_mrp(blocks: List[Dict[str, Any]], min_confidence: float = 0.6) -> Di
                 formatted_value = f"₹{value_str}" if not value_str.startswith("₹") else value_str
                 status = _resolve_status(True, confidence, min_confidence)
                 return {
+                    "field_name": "mrp",
                     "value": formatted_value,
-                    "bbox": bbox,
+                    "bbox": _format_bbox(raw_bbox),
                     "confidence": round(confidence, 4),
                     "status": status,
                 }
 
     return {
+        "field_name": "mrp",
         "value": None,
         "bbox": None,
         "confidence": 0.0,
-        "status": "not_detected",
+        "status": "missing",
     }
 
 
@@ -119,7 +133,7 @@ def extract_net_quantity(blocks: List[Dict[str, Any]], min_confidence: float = 0
     for block in blocks:
         text = block.get("text", "")
         confidence = float(block.get("confidence", 0.0))
-        bbox = block.get("bbox")
+        raw_bbox = block.get("bbox")
 
         for pattern in NET_QTY_PATTERNS:
             match = pattern.search(text)
@@ -127,17 +141,19 @@ def extract_net_quantity(blocks: List[Dict[str, Any]], min_confidence: float = 0
                 value = match.group(1) if match.groups() else match.group(0)
                 status = _resolve_status(True, confidence, min_confidence)
                 return {
+                    "field_name": "net_quantity",
                     "value": value.strip(),
-                    "bbox": bbox,
+                    "bbox": _format_bbox(raw_bbox),
                     "confidence": round(confidence, 4),
                     "status": status,
                 }
 
     return {
+        "field_name": "net_quantity",
         "value": None,
         "bbox": None,
         "confidence": 0.0,
-        "status": "not_detected",
+        "status": "missing",
     }
 
 
@@ -146,7 +162,7 @@ def extract_manufacturer(blocks: List[Dict[str, Any]], min_confidence: float = 0
     for idx, block in enumerate(blocks):
         text = block.get("text", "")
         confidence = float(block.get("confidence", 0.0))
-        bbox = block.get("bbox")
+        raw_bbox = block.get("bbox")
 
         for pattern in MANUFACTURER_PATTERNS:
             match = pattern.search(text)
@@ -160,17 +176,19 @@ def extract_manufacturer(blocks: List[Dict[str, Any]], min_confidence: float = 0
                 val = captured if captured else text
                 status = _resolve_status(True, confidence, min_confidence)
                 return {
+                    "field_name": "manufacturer",
                     "value": val,
-                    "bbox": bbox,
+                    "bbox": _format_bbox(raw_bbox),
                     "confidence": round(confidence, 4),
                     "status": status,
                 }
 
     return {
+        "field_name": "manufacturer",
         "value": None,
         "bbox": None,
         "confidence": 0.0,
-        "status": "not_detected",
+        "status": "missing",
     }
 
 
@@ -179,7 +197,7 @@ def extract_date_declaration(blocks: List[Dict[str, Any]], min_confidence: float
     for block in blocks:
         text = block.get("text", "")
         confidence = float(block.get("confidence", 0.0))
-        bbox = block.get("bbox")
+        raw_bbox = block.get("bbox")
 
         for pattern in DATE_PATTERNS:
             match = pattern.search(text)
@@ -187,15 +205,17 @@ def extract_date_declaration(blocks: List[Dict[str, Any]], min_confidence: float
                 val = match.group(0).strip()
                 status = _resolve_status(True, confidence, min_confidence)
                 return {
+                    "field_name": "date_declaration",
                     "value": val,
-                    "bbox": bbox,
+                    "bbox": _format_bbox(raw_bbox),
                     "confidence": round(confidence, 4),
                     "status": status,
                 }
 
     return {
+        "field_name": "date_declaration",
         "value": None,
         "bbox": None,
         "confidence": 0.0,
-        "status": "not_detected",
+        "status": "missing",
     }
