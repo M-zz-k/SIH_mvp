@@ -1,0 +1,72 @@
+@import "tailwindcss";
+
+/* ============================================================
+   METROSCAN AI — Global Styles & Design Tokens
+   ============================================================
+   Person 1 (Frontend Lead) owns this file.
+   Uses Tailwind v4 CSS-first configuration.
+   ============================================================ */
+
+@theme {
+  /* --- Brand Colors --- */
+  --color-primary: #6366f1;
+  --color-primary-light: #818cf8;
+  --color-primary-dark: #4f46e5;
+
+  --color-surface: #0f172a;
+  --color-surface-light: #1e293b;
+  --color-surface-lighter: #334155;
+
+  --color-accent: #06b6d4;
+  --color-accent-light: #22d3ee;
+
+  /* --- Status Colors --- */
+  --color-compliant: #10b981;
+  --color-review: #f59e0b;
+  --color-violation: #ef4444;
+
+  /* --- Typography --- */
+  --font-sans: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+
+  /* --- Spacing --- */
+  --spacing-page: 1.5rem;
+}
+
+/* --- Base resets --- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: var(--color-surface);
+  color: #e2e8f0;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* --- Scrollbar styling --- */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-surface);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-surface-lighter);
+  border-radius: 3px;
+}
+
+/* --- Glassmorphism utility --- */
+.glass {
+  background: rgba(30, 41, 59, 0.7);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(99, 102, 241, 0.15);
+}
+
+/* --- Tier badge utilities --- */
+.tier-likely_compliant { background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); }
+.tier-needs_review     { background: rgba(245, 158, 11, 0.15); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3); }
+.tier-likely_violation { background: rgba(239, 68, 68, 0.15);  color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); }

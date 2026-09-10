@@ -1,0 +1,27 @@
+# =============================================================================
+# METROSCAN AI — Docker Compose (PostgreSQL only)
+# =============================================================================
+# Spins up just Postgres so nobody needs to install it manually.
+# Usage:
+#   docker-compose up -d        # start Postgres in background
+#   docker-compose down         # stop
+#   docker-compose down -v      # stop and delete data volume
+
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: metroscan-db
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: metroscan
+      POSTGRES_PASSWORD: metroscan
+      POSTGRES_DB: metroscan
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:

@@ -1,0 +1,35 @@
+# =============================================================================
+# METROSCAN AI — Python Dependencies
+# =============================================================================
+# Install with: pip install -r requirements.txt
+# All dependencies are listed even if not used yet — each person activates
+# what they need as they implement their module.
+
+# --- Backend (Person 2) ---
+fastapi==0.115.0
+uvicorn[standard]==0.30.0
+python-multipart==0.0.9
+pydantic==2.9.0
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+
+# --- Database (Person 5) ---
+sqlalchemy==2.0.31
+psycopg2-binary==2.9.9
+alembic==1.13.1
+
+# --- OCR (Person 3) ---
+paddlepaddle==2.6.1
+paddleocr==2.8.1
+opencv-python==4.10.0.84
+Pillow==10.4.0
+
+# --- Rule Engine (Person 4) ---
+# opencv-python already listed above
+numpy==1.26.4
+
+# --- Evidence & Reporting (Person 5) ---
+reportlab==4.2.2
+
+# --- Shared / Utilities ---
+python-dotenv==1.0.1
