@@ -7,7 +7,7 @@ import {
 } from 'lucide-react';
 
 const NAV_ITEMS = [
-  { to: '/dashboard', label: 'Executive Command', icon: <LayoutDashboard className="w-5 h-5" /> },
+  { to: '/dashboard', label: 'Dashboard', icon: <LayoutDashboard className="w-5 h-5" /> },
   { to: '/bulk-upload', label: 'Bulk Ingestion', icon: <Layers className="w-5 h-5" /> },
   { to: '/repository', label: 'Field Dossiers', icon: <FolderOpen className="w-5 h-5" /> },
   { to: '/scan', label: 'Single Scan', icon: <ScanLine className="w-5 h-5" /> },
@@ -31,13 +31,13 @@ export function AppLayout({ children, userRole }) {
   };
 
   return (
-    <div className="min-h-screen flex flex-col md:flex-row w-full bg-canvas text-text-secondary">
+    <div className="min-h-screen flex w-full bg-[var(--color-canvas-outer)] text-text-secondary p-4 md:p-6 gap-6">
       
       {/* 1. Sidebar - Desktop */}
-      <aside className="hidden md:flex flex-col w-[80px] lg:w-[280px] bg-sidebar text-white shrink-0 h-screen sticky top-0 z-50 transition-all duration-300 shadow-xl">
+      <aside className="hidden md:flex flex-col w-[80px] lg:w-[280px] bg-sidebar text-white shrink-0 h-[calc(100vh-48px)] sticky top-6 z-50 transition-all duration-300 shadow-[0_8px_25px_rgba(12,45,55,0.15)] rounded-3xl overflow-hidden">
         
         {/* Profile / Brand Header */}
-        <div className="h-32 pt-4 flex items-center justify-center lg:justify-start lg:px-6 shrink-0 bg-[#174A59] rounded-br-[2.5rem] shadow-md relative z-10">
+        <div className="h-28 pt-4 flex items-center justify-center lg:justify-start lg:px-6 shrink-0 bg-[#0A2229] border-b border-white/5 relative z-10">
           <div className="flex items-center gap-3">
              <div className="w-10 h-10 bg-primary-light rounded-full flex items-center justify-center border-2 border-white/20 shrink-0">
                <UserCircle className="w-6 h-6 text-white" />
@@ -60,12 +60,12 @@ export function AppLayout({ children, userRole }) {
               key={item.label}
               to={item.to}
               className={({ isActive }) => `
-                flex items-center gap-4 px-3 py-3 rounded-2xl text-[13px] font-bold transition-all
-                ${isActive ? 'bg-white text-[#171A19] shadow-sm ml-2' : 'text-white/60 hover:text-white hover:bg-white/5 mx-2'}
+                flex items-center gap-4 px-3 py-3 rounded-2xl text-[15px] font-bold transition-all duration-200
+                ${isActive ? 'bg-white text-[#0E5E73] shadow-sm ml-2' : 'text-[#B2CBD3] hover:text-white hover:bg-white/10 mx-2'}
               `}
             >
               <div className={`p-2 rounded-xl shrink-0 transition-colors ${
-                location.pathname === item.to ? 'text-primary' : 'bg-transparent text-white/60'
+                location.pathname === item.to ? 'text-[#0E5E73]' : 'bg-transparent text-[#B2CBD3]'
               }`}>
                 {item.icon}
               </div>
@@ -81,8 +81,8 @@ export function AppLayout({ children, userRole }) {
               key={item.label}
               to={item.to}
               className={({ isActive }) => `
-                flex items-center gap-4 px-3 py-2 rounded-xl text-[12px] font-bold transition-all
-                ${isActive ? 'bg-primary-dark/40 text-white' : 'text-primary-light opacity-70 hover:text-white hover:bg-white/5'}
+                flex items-center gap-4 px-3 py-2.5 rounded-xl text-[14px] font-bold transition-all hover:translate-x-1 duration-200
+                ${isActive ? 'bg-primary-dark/40 text-white' : 'text-white hover:text-primary-light hover:bg-white/10'}
               `}
             >
               <div className="p-1.5 shrink-0">
@@ -91,7 +91,7 @@ export function AppLayout({ children, userRole }) {
               <span className="hidden lg:block">{item.label}</span>
             </NavLink>
           ))}
-          <button onClick={handleLogout} className="flex items-center gap-4 px-3 py-2 rounded-xl text-[12px] font-bold text-primary-light opacity-70 hover:text-white hover:bg-white/5 transition-all mt-2">
+          <button onClick={handleLogout} className="flex items-center gap-4 px-3 py-2.5 rounded-xl text-[14px] font-bold text-white hover:text-status-err-text hover:bg-white/10 transition-all hover:translate-x-1 duration-200 mt-2">
             <div className="p-1.5 shrink-0"><LogOut className="w-5 h-5" /></div>
             <span className="hidden lg:block">Log Out</span>
           </button>
@@ -135,8 +135,8 @@ export function AppLayout({ children, userRole }) {
           </div>
         </header>
 
-        {/* 3. Main Page Canvas */}
-        <main className="flex-1 w-full max-w-[1440px] mx-auto px-4 sm:px-8 pb-10 overflow-y-auto">
+        {/* 3. Main Page Canvas with fade-in animation */}
+        <main className="flex-1 w-full max-w-[1440px] mx-auto px-4 sm:px-8 pb-10 overflow-y-auto animate-in fade-in duration-500 bg-canvas rounded-3xl shadow-[0_8px_25px_rgba(12,45,55,0.06)] mt-4 pt-8">
           {children}
         </main>
       </div>
@@ -145,8 +145,8 @@ export function AppLayout({ children, userRole }) {
       {mobileOpen && (
         <div className="md:hidden fixed inset-0 z-50 flex">
           <div className="fixed inset-0 bg-text-primary/40 backdrop-blur-sm" onClick={() => setMobileOpen(false)}></div>
-          <aside className="relative w-[280px] max-w-[80%] bg-sidebar text-white h-full flex flex-col shadow-2xl">
-             <div className="h-28 pt-4 flex items-center px-6 shrink-0 justify-between bg-[#174A59] rounded-br-[2.5rem] shadow-md relative z-10">
+          <aside className="relative w-[280px] max-w-[80%] bg-sidebar text-white h-full flex flex-col shadow-2xl rounded-r-3xl overflow-hidden">
+             <div className="h-28 pt-4 flex items-center px-6 shrink-0 justify-between bg-primary-dark/50 border-b border-white/5 relative z-10">
                 <div className="flex items-center gap-3">
                    <div className="w-10 h-10 bg-primary-light rounded-full flex items-center justify-center border-2 border-white/20 shrink-0">
                      <UserCircle className="w-6 h-6 text-white" />
@@ -168,7 +168,7 @@ export function AppLayout({ children, userRole }) {
                   onClick={() => setMobileOpen(false)}
                   className={({ isActive }) => `
                     flex items-center gap-4 px-3 py-3 rounded-2xl text-[13px] font-bold transition-all
-                    ${isActive ? 'bg-white text-[#171A19] shadow-sm ml-2' : 'text-white/60 hover:text-white'}
+                    ${isActive ? 'bg-white text-primary shadow-sm ml-2' : 'text-white/60 hover:text-white mx-2'}
                   `}
                 >
                   <div className={`p-2 rounded-xl shrink-0 transition-colors ${
