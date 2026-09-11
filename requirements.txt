@@ -1,0 +1,15 @@
+# Core
+pydantic>=2.0
+
+# OCR (per team tech stack)
+paddleocr>=2.7
+paddlepaddle>=2.5      # CPU build; swap for paddlepaddle-gpu if you have CUDA
+opencv-python>=4.8
+
+# Optional NER fallback for manufacturer name/address cleanup
+spacy>=3.7
+# After installing spacy, download the small English model:
+#   python -m spacy download en_core_web_sm
+
+# Testing
+pytest>=7.4
