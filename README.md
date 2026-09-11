@@ -1,8 +1,8 @@
-# METROSCAN AI — Backend (Dev2 / Backend-API lead)
+# METROSCAN AI — Integrated Platform
 
-FastAPI backend for the METROSCAN AI compliance platform. Handles auth,
+FastAPI backend and OCR extraction pipeline for the METROSCAN AI compliance platform. Handles auth,
 request orchestration, and wires together OCR/extraction, the rule engine,
-and evidence/storage — each owned by a different teammate.
+and evidence/storage.
 
 ## Quickstart
 
@@ -14,8 +14,7 @@ cp .env.example .env
 uvicorn app.main:app --reload --port 8000
 ```
 
-Open http://localhost:8000/docs for interactive Swagger UI (test every
-endpoint from the browser — no frontend needed yet).
+Open http://localhost:8000/docs for interactive Swagger UI.
 
 Run tests:
 ```bash
@@ -28,49 +27,111 @@ Everyone works in their **own file** and imports a **shared contract**:
 
 | Who | Owns | Never touches |
 |---|---|---|
-| **Dev2 (me)** | `app/api/routes/*.py`, `app/services/pipeline.py`, `app/core/*`, `app/main.py`, `app/models/schemas.py` (contract owner) | other devs' interface files |
-| Dev3 (OCR) | inside `app/services/extraction_interface.py` only | routes, main.py |
-| Dev4 (rules) | inside `app/services/rule_engine_interface.py` only | routes, main.py |
-| Dev5 (evidence/PDF) | inside `app/services/storage_interface.py` only | routes, main.py |
-| Dev1 (frontend) | separate repo/folder, calls this API over HTTP | this repo |
+| **Dev2 (Backend)** | `app/api/routes/*.py`, `app/services/pipeline.py`, `app/core/*`, `app/main.py`, `app/models/schemas.py` | other devs' interface files |
+| **Dev3 (OCR)** | `src/`, `ocr_extraction/`, `app/services/extraction_interface.py` | routes, main.py |
+| **Dev4 (Rules)** | `rule_engine/`, `physical_measurement.py`, `app/services/rule_engine_interface.py` | routes, main.py |
+| **Dev5 (Evidence/PDF)** | `data_evidence/`, `app/services/storage_interface.py` | routes, main.py |
+| **Dev1 (Frontend)** | `frontend/` (React + Vite) | backend source code |
 
-Each `*_interface.py` file has a **mock implementation already working** —
-the whole pipeline runs end-to-end today with fake data. Dev3/4/5 each pull
-this repo, replace only the body of their one function (signature stays
-identical), and push. Because nobody edits the same file as anyone else,
-there's nothing to merge-conflict on.
+---
 
-If a teammate needs a new field in the data contract, they add it to
-`app/models/schemas.py` and message the group first — that file is the one
-shared surface, so treat changes to it like a mini design review.
+# OCR & Extraction Module (Role 3)
 
-## API surface
+Located in `src/` and `ocr_extraction/`:
+- `src/data_contract.py`: Shared data contract for OCR extraction results.
+- `src/ocr_engine.py`: PaddleOCR wrapper with `MockOCREngine` fallback.
+- `src/field_extractor.py`: Regex and pattern-based field extraction.
+- `src/pipeline.py`: End-to-end OCR + extraction pipeline.
+```
+ocr_extraction/
+├── src/
+│   ├── data_contract.py     # <-- THE SHARED CONTRACT
+│   ├── ocr_engine.py        # PaddleOCR wrapper (+ MockOCREngine fallback)
+│   ├── field_extractor.py   # regex/spaCy field parsing
+│   └── pipeline.py          # ties OCR + extraction together
+├── tests/
+│   └── test_field_extractor.py   # Unit tests
+├── main.py                  # CLI
+└── requirements.txt
+```
 
-- `POST /auth/register` — public self-registration; **always creates an `inspector` role**
-- `POST /auth/login` — returns a JWT; role is embedded in the token
-- `POST /auth/promote` — **admin-only** (403 for inspector/supervisor); body: `{"email": "...", "new_role": "supervisor"|"admin"}`; promotes an existing user's role
-- `POST /scan` — single-image capture (in-store mode)
-- `POST /bulk` — multi-image bulk upload; response includes `failed_filenames: string[]` so the frontend can show a per-file retry list
-- `GET /bulk/{job_id}`, `GET /bulk/{job_id}/results`
-- `GET /results?q=&tier=&date_from=&date_to=` — searchable repository
-- `GET /results/{id}` — full inspection detail
-- `POST /results/{id}/report?format=pdf` — export
-- `GET /dashboard/stats` — supervisor/admin-only analytics (returns 403 for inspector tokens)
+## Quick start
 
-### Changed response shapes (vs. original)
+```bash
+pip install -r requirements.txt
+python -m spacy download en_core_web_sm   # optional, for manufacturer NER
 
-| Endpoint | Field | Change |
-|---|---|---|
-| `POST /bulk` | `failed_filenames` | **New** — `string[]` of filenames that errored; empty list on full success |
-| `POST /auth/register` | `role` | Always `"inspector"` now; was previously controllable via query param |
-| `POST /auth/promote` | *(new endpoint)* | Admin-only; body `{email, new_role}`; returns `UserOut` |
+# single label image
+python main.py --image path/to/label.jpg --out result.json
 
-> **Teammate note (schemas.py change):** `BulkJobStatus` gained an optional `failed_filenames: list[str] = []` field.
-> Dev1 (frontend) and anyone deserialising this shape should accept the new field — it defaults to `[]` so existing clients won't break.
-> Dev3/4/5's interface files are unaffected.
+# bulk folder (e.g. downloaded e-commerce listing images)
+python main.py --folder path/to/images/ --out results.json
+```
 
-## Swapping SQLite → Postgres
+### Developing before PaddleOCR is installed / without real images
 
-Default is local SQLite (`metroscan.db`) so this runs with zero setup. Once
-Dev5's Postgres schema is ready, just set `DATABASE_URL` in `.env` to the
-Postgres connection string — no code changes needed, SQLAlchemy handles it.
+Every other role can build against this module **today** using the mock
+engine, which returns a deterministic fake label:
+
+```bash
+python main.py --image anything.jpg --mock --out result.json
+```
+
+```python
+from pipeline import process_label_image
+result = process_label_image("label.jpg", force_mock=True)
+print(result.model_dump_json(indent=2))
+```
+
+## Using this from the backend (Role 2)
+
+```python
+import sys
+sys.path.insert(0, "ocr_extraction/src")
+from pipeline import process_label_image
+
+result = process_label_image(image_path)
+# result is a pydantic model -> result.model_dump() gives you a plain dict
+# ready to store in Postgres (Role 5) or hand to the rule engine (Role 4)
+```
+
+## Using this from the rule engine (Role 4)
+
+```python
+from data_contract import FieldName
+
+mrp_field = result.get_field(FieldName.MRP)
+if not mrp_field.found:
+    # Rule 6/7 violation: missing mandatory declaration
+    ...
+
+for block in result.text_blocks:
+    # block.line_height_px + block.bbox is everything needed for the
+    # relative font-size heuristic (compare against the largest text block
+    # on the same label, e.g. the brand name)
+    ...
+```
+
+## Running tests
+
+```bash
+pytest tests/ -v
+```
+
+11/11 passing — covers MRP (multiple formats), net quantity (g/ml), mfg
+date, consumer care, country of origin, manufacturer name + multi-line
+address, batch number, missing-field handling, and a full mock-engine
+end-to-end run.
+
+## Extending
+
+- **New field?** Add it to `FieldName` in `data_contract.py`, write a regex
+  in `field_extractor.py`, wire it into `extract_fields()`, add a test.
+- **Multilingual (Hindi) OCR?** `get_engine(lang="hi")` — PaddleOCR supports
+  a Hindi model out of the box; regex patterns will need Devanagari
+  equivalents added alongside the English ones (kept as separate patterns,
+  not merged, so both remain auditable).
+- **Curved/cylindrical packaging (future scope, per slide 6):** plug a
+  TextSnake/DewarpNet unwarping step in front of `ocr_engine.py` — the rest
+  of the pipeline doesn't need to change.
+>>>>>>> origin/ocrdone1

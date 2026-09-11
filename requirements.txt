@@ -1,19 +1,27 @@
 fastapi==0.115.0
 uvicorn[standard]==0.30.6
 sqlalchemy==2.0.35
-pydantic==2.9.2
-pydantic-settings==2.5.2
+pydantic>=2.9.2
+pydantic-settings>=2.5.2
 python-jose[cryptography]==3.3.0
 passlib[bcrypt]==1.7.4
-bcrypt==4.0.1
+bcrypt>=4.0.1
 python-multipart==0.0.9
 psycopg2-binary==2.9.9
 python-dotenv==1.0.1
+sqlmodel>=0.0.14
+boto3>=1.34.0
+supabase>=2.3.0
+python-docx>=1.1.0
+reportlab>=4.2.0
+
+# ── OCR & Computer Vision ──────────────────────────────────────────────────
+opencv-python>=4.8
+paddleocr>=2.7
+paddlepaddle>=2.5
+spacy>=3.7
 
 # ── Test dependencies ────────────────────────────────────────────────────────
-# httpx is a required transitive dep of Starlette's TestClient (not auto-installed).
-# pytest is needed to run the test suite.
-# Both are listed here so `pip install -r requirements.txt` is enough for
-# a fresh clone to run `pytest` with no extra steps.
-httpx==0.25.2
-pytest>=9.1.0
+httpx>=0.25.2
+pytest>=7.4
+
