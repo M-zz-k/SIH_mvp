@@ -37,7 +37,7 @@ export function AppLayout({ children, userRole }) {
       <aside className="hidden md:flex flex-col w-[80px] lg:w-[280px] bg-sidebar text-white shrink-0 h-screen sticky top-0 z-50 transition-all duration-300 shadow-xl">
         
         {/* Profile / Brand Header */}
-        <div className="h-24 flex items-center justify-center lg:justify-start lg:px-6 border-b border-white/10 shrink-0">
+        <div className="h-32 pt-4 flex items-center justify-center lg:justify-start lg:px-6 shrink-0 bg-[#174A59] rounded-br-[2.5rem] shadow-md relative z-10">
           <div className="flex items-center gap-3">
              <div className="w-10 h-10 bg-primary-light rounded-full flex items-center justify-center border-2 border-white/20 shrink-0">
                <UserCircle className="w-6 h-6 text-white" />
@@ -60,12 +60,12 @@ export function AppLayout({ children, userRole }) {
               key={item.label}
               to={item.to}
               className={({ isActive }) => `
-                flex items-center gap-4 px-3 py-3 rounded-xl text-[13px] font-bold transition-all
-                ${isActive ? 'bg-primary-dark/40 text-white' : 'text-primary-light opacity-80 hover:text-white hover:bg-white/5'}
+                flex items-center gap-4 px-3 py-3 rounded-2xl text-[13px] font-bold transition-all
+                ${isActive ? 'bg-white text-[#171A19] shadow-sm ml-2' : 'text-white/60 hover:text-white hover:bg-white/5 mx-2'}
               `}
             >
-              <div className={`p-2 rounded-full shrink-0 transition-colors ${
-                location.pathname === item.to ? 'bg-primary text-white' : 'bg-transparent text-primary-light'
+              <div className={`p-2 rounded-xl shrink-0 transition-colors ${
+                location.pathname === item.to ? 'text-primary' : 'bg-transparent text-white/60'
               }`}>
                 {item.icon}
               </div>
@@ -146,7 +146,7 @@ export function AppLayout({ children, userRole }) {
         <div className="md:hidden fixed inset-0 z-50 flex">
           <div className="fixed inset-0 bg-text-primary/40 backdrop-blur-sm" onClick={() => setMobileOpen(false)}></div>
           <aside className="relative w-[280px] max-w-[80%] bg-sidebar text-white h-full flex flex-col shadow-2xl">
-             <div className="h-24 flex items-center px-6 border-b border-white/10 shrink-0 justify-between">
+             <div className="h-28 pt-4 flex items-center px-6 shrink-0 justify-between bg-[#174A59] rounded-br-[2.5rem] shadow-md relative z-10">
                 <div className="flex items-center gap-3">
                    <div className="w-10 h-10 bg-primary-light rounded-full flex items-center justify-center border-2 border-white/20 shrink-0">
                      <UserCircle className="w-6 h-6 text-white" />
@@ -167,12 +167,12 @@ export function AppLayout({ children, userRole }) {
                   to={item.to}
                   onClick={() => setMobileOpen(false)}
                   className={({ isActive }) => `
-                    flex items-center gap-4 px-3 py-3 rounded-xl text-[13px] font-bold transition-all
-                    ${isActive ? 'bg-primary-dark/40 text-white' : 'text-primary-light opacity-80'}
+                    flex items-center gap-4 px-3 py-3 rounded-2xl text-[13px] font-bold transition-all
+                    ${isActive ? 'bg-white text-[#171A19] shadow-sm ml-2' : 'text-white/60 hover:text-white'}
                   `}
                 >
-                  <div className={`p-2 rounded-full shrink-0 transition-colors ${
-                    location.pathname === item.to ? 'bg-primary text-white' : 'bg-transparent text-primary-light'
+                  <div className={`p-2 rounded-xl shrink-0 transition-colors ${
+                    location.pathname === item.to ? 'text-primary' : 'bg-transparent text-white/60'
                   }`}>
                     {item.icon}
                   </div>

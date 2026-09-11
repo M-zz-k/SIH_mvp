@@ -2,11 +2,11 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary: #50665B;
-  --color-primary-light: #6A8577;
-  --color-primary-dark: #37473F;
+  --color-primary: #ECA843;
+  --color-primary-light: #F5CA7B;
+  --color-primary-dark: #D6902B;
   
-  --color-sidebar: #171A19;
+  --color-sidebar: #222938;
   --color-canvas: #F7F7F9;
   --color-card: #FFFFFF;
   
