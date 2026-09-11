@@ -1,211 +1,76 @@
-# METROSCAN AI
+# METROSCAN AI — Backend (Dev2 / Backend-API lead)
 
-**Compliance-checking platform for packaged commodities under India's Legal Metrology (Packaged Commodities) Rules, 2011.**
+FastAPI backend for the METROSCAN AI compliance platform. Handles auth,
+request orchestration, and wires together OCR/extraction, the rule engine,
+and evidence/storage — each owned by a different teammate.
 
-Officers upload product label photos (single or bulk). The system runs OCR, extracts mandatory declarations, validates them against rules, checks font sizes, and returns a tiered compliance verdict with tamper-proof evidence.
-
----
-
-## 🚀 Quick Start (Get running in < 10 minutes)
-
-### 1. Clone & Setup
+## Quickstart
 
 ```bash
-git clone <repo-url> && cd SIH_mvp
-cp .env.example .env
-```
-
-### 2. Start PostgreSQL (requires Docker)
-
-```bash
-docker-compose up -d
-```
-
-> This spins up Postgres at `localhost:5432` with user `metroscan` / password `metroscan`.
-> If you don't have Docker, install Postgres manually and create a DB named `metroscan`.
-
-### 3. Backend (FastAPI)
-
-```bash
-# Create virtual environment (one time)
 python -m venv venv
-venv\Scripts\activate        # Windows
-# source venv/bin/activate   # macOS/Linux
-
+source venv/bin/activate        # Windows: venv\Scripts\activate
 pip install -r requirements.txt
-
-# Run the API server
-cd backend
-uvicorn main:app --reload --port 8000
+cp .env.example .env
+uvicorn app.main:app --reload --port 8000
 ```
 
-API will be at **http://localhost:8000** — try http://localhost:8000/docs for Swagger UI.
+Open http://localhost:8000/docs for interactive Swagger UI (test every
+endpoint from the browser — no frontend needed yet).
 
-### 4. Frontend (React + Vite)
-
+Run tests:
 ```bash
-cd frontend
-npm install
-npm run dev
+pytest
 ```
 
-App will be at **http://localhost:5173** — frontend proxies `/api/*` to the backend.
+## How this avoids merge conflicts
 
----
+Everyone works in their **own file** and imports a **shared contract**:
 
-## 📁 Repository Structure
+| Who | Owns | Never touches |
+|---|---|---|
+| **Dev2 (me)** | `app/api/routes/*.py`, `app/services/pipeline.py`, `app/core/*`, `app/main.py`, `app/models/schemas.py` (contract owner) | other devs' interface files |
+| Dev3 (OCR) | inside `app/services/extraction_interface.py` only | routes, main.py |
+| Dev4 (rules) | inside `app/services/rule_engine_interface.py` only | routes, main.py |
+| Dev5 (evidence/PDF) | inside `app/services/storage_interface.py` only | routes, main.py |
+| Dev1 (frontend) | separate repo/folder, calls this API over HTTP | this repo |
 
-```
-SIH_mvp/
-├── shared/                  # 🔒 SHARED DATA CONTRACT — read by everyone
-│   ├── models.py            # Pydantic models (the schema)
-│   └── mock_data.json       # 3 realistic mock inspection results
-│
-├── frontend/                # 👤 Person 1 — Frontend/Dashboard Lead
-│   └── src/
-│       ├── pages/           # Login, Upload, Results, Repository pages
-│       ├── data/            # Copy of mock_data.json for offline UI dev
-│       └── App.jsx          # Router & navigation
-│
-├── backend/                 # 👤 Person 2 — Backend/API Lead
-│   └── main.py              # FastAPI app with route stubs
-│
-├── ocr_extraction/          # 👤 Person 3 — OCR & Extraction Engineer
-│   └── extract.py           # extract_declarations(image_path) → Declarations
-│
-├── rule_engine/             # 👤 Person 4 — Rule Engine & Font Heuristic
-│   └── validate.py          # validate(declarations) → ComplianceResult
-│
-├── data_evidence/           # 👤 Person 5 — Data & Evidence Engineer
-│   ├── evidence.py          # hash_image(), generate_pdf(), DB helpers
-│   └── db_models.py         # SQLAlchemy ORM (placeholder)
-│
-├── docs/                    # Architecture diagrams & references
-│   └── ARCHITECTURE.md
-│
-├── requirements.txt         # Python dependencies (all pre-listed)
-├── docker-compose.yml       # PostgreSQL only
-├── .env.example             # Environment variable template
-└── README.md                # ← You are here
-```
+Each `*_interface.py` file has a **mock implementation already working** —
+the whole pipeline runs end-to-end today with fake data. Dev3/4/5 each pull
+this repo, replace only the body of their one function (signature stays
+identical), and push. Because nobody edits the same file as anyone else,
+there's nothing to merge-conflict on.
 
----
+If a teammate needs a new field in the data contract, they add it to
+`app/models/schemas.py` and message the group first — that file is the one
+shared surface, so treat changes to it like a mini design review.
 
-## 👥 Team Assignments & Branch Convention
+## API surface
 
-| Person | Role                          | Branch             | Works in           | Start file                        |
-|--------|-------------------------------|---------------------|--------------------|-----------------------------------|
-| 1      | Frontend / Dashboard Lead     | `feature/frontend`  | `/frontend/`       | `frontend/src/pages/UploadPage.jsx` |
-| 2      | Backend / API Lead            | `feature/backend`   | `/backend/`        | `backend/main.py`                 |
-| 3      | OCR & Extraction Engineer     | `feature/ocr`       | `/ocr_extraction/` | `ocr_extraction/extract.py`       |
-| 4      | Rule Engine & Font Heuristic  | `feature/rules`     | `/rule_engine/`    | `rule_engine/validate.py`         |
-| 5      | Data & Evidence Engineer      | `feature/evidence`  | `/data_evidence/`  | `data_evidence/evidence.py`       |
-| 6      | Integration / QA Lead         | `main`              | Everywhere (read)  | `backend/main.py` + `README.md`   |
+- `POST /auth/register` — public self-registration; **always creates an `inspector` role**
+- `POST /auth/login` — returns a JWT; role is embedded in the token
+- `POST /auth/promote` — **admin-only** (403 for inspector/supervisor); body: `{"email": "...", "new_role": "supervisor"|"admin"}`; promotes an existing user's role
+- `POST /scan` — single-image capture (in-store mode)
+- `POST /bulk` — multi-image bulk upload; response includes `failed_filenames: string[]` so the frontend can show a per-file retry list
+- `GET /bulk/{job_id}`, `GET /bulk/{job_id}/results`
+- `GET /results?q=&tier=&date_from=&date_to=` — searchable repository
+- `GET /results/{id}` — full inspection detail
+- `POST /results/{id}/report?format=pdf` — export
+- `GET /dashboard/stats` — supervisor/admin-only analytics (returns 403 for inspector tokens)
 
-**Rule: Each person only modifies files in their assigned directory.** This eliminates merge conflicts. If you need a schema change, announce it to the team first.
+### Changed response shapes (vs. original)
 
-### Creating your branch
+| Endpoint | Field | Change |
+|---|---|---|
+| `POST /bulk` | `failed_filenames` | **New** — `string[]` of filenames that errored; empty list on full success |
+| `POST /auth/register` | `role` | Always `"inspector"` now; was previously controllable via query param |
+| `POST /auth/promote` | *(new endpoint)* | Admin-only; body `{email, new_role}`; returns `UserOut` |
 
-```bash
-git checkout -b feature/<your-area>   # e.g., feature/ocr
-# Work in your directory, commit, push
-git push -u origin feature/<your-area>
-```
+> **Teammate note (schemas.py change):** `BulkJobStatus` gained an optional `failed_filenames: list[str] = []` field.
+> Dev1 (frontend) and anyone deserialising this shape should accept the new field — it defaults to `[]` so existing clients won't break.
+> Dev3/4/5's interface files are unaffected.
 
----
+## Swapping SQLite → Postgres
 
-## 🔗 Shared Data Contract
-
-**File: [`shared/models.py`](shared/models.py)**
-
-This is the single source of truth for data shapes. Every module imports from here:
-
-```python
-from shared.models import InspectionResult, Declarations, ComplianceResult
-```
-
-### ⚠️ Schema Change Policy
-
-**DO NOT change `shared/models.py` without telling the entire team.** Every module depends on these exact shapes. If you need a new field:
-
-1. Announce in the team chat
-2. Get agreement from affected people
-3. Make the change with a default value (backward compatible)
-4. Everyone pulls the change
-
-### Key Types
-
-| Type              | Produced by | Consumed by      | Description                            |
-|-------------------|-------------|------------------|----------------------------------------|
-| `Declarations`    | Person 3    | Person 4         | OCR-extracted fields (MRP, qty, etc.)  |
-| `ComplianceResult`| Person 4    | Person 2, 5      | Compliance verdicts + font check + tier|
-| `EvidenceRecord`  | Person 5    | Person 2         | SHA-256 hash + timestamp + PDF path    |
-| `InspectionResult`| Person 2    | Person 1 (API)   | Everything combined — the API response |
-
----
-
-## 🔄 Integration Order (Pipeline)
-
-```
-Upload Image
-    │
-    ▼
-┌──────────────────┐
-│  OCR Extraction   │  Person 3: extract_declarations(image) → Declarations
-└────────┬─────────┘
-         │
-         ▼
-┌──────────────────┐
-│  Rule Engine      │  Person 4: validate(declarations) → ComplianceResult
-└────────┬─────────┘
-         │
-         ▼
-┌──────────────────┐
-│  Data & Evidence  │  Person 5: hash_image() + generate_pdf() → EvidenceRecord
-└────────┬─────────┘
-         │
-         ▼
-┌──────────────────┐
-│  Backend API      │  Person 2: Orchestrates above, returns InspectionResult
-└────────┬─────────┘
-         │
-         ▼
-┌──────────────────┐
-│  Frontend         │  Person 1: Renders InspectionResult from API
-└──────────────────┘
-```
-
-**Key rule: The frontend ONLY talks to the backend API.** It never imports from `ocr_extraction`, `rule_engine`, or `data_evidence` directly.
-
----
-
-## 🧪 Testing the Pipeline (Person 6 — QA Lead)
-
-Even before any real implementation, you can test the full pipeline:
-
-```bash
-# Backend returns mock data shaped correctly
-curl http://localhost:8000/results/insp-001-abc
-
-# Upload a test image (returns mock analysis)
-curl -X POST http://localhost:8000/upload/single -F "file=@test_image.jpg"
-
-# Search (returns all mock results)
-curl "http://localhost:8000/results/search/query?q=tata"
-```
-
-The frontend at http://localhost:5173 renders all mock data visually from the first commit.
-
----
-
-## 🏗️ Environment Variables
-
-Copy `.env.example` to `.env` and update values:
-
-| Variable              | Default                                              | Description                     |
-|-----------------------|------------------------------------------------------|---------------------------------|
-| `DATABASE_URL`        | `postgresql://metroscan:metroscan@localhost:5432/metroscan` | PostgreSQL connection string |
-| `JWT_SECRET`          | (change this)                                        | Secret for signing JWTs         |
-| `STORAGE_PATH`        | `./uploads`                                          | Where uploaded images are saved |
-| `REPORTS_PATH`        | `./reports`                                          | Where generated PDFs are saved  |
-| `VITE_API_URL`        | `http://localhost:8000`                              | Backend URL for frontend        |
+Default is local SQLite (`metroscan.db`) so this runs with zero setup. Once
+Dev5's Postgres schema is ready, just set `DATABASE_URL` in `.env` to the
+Postgres connection string — no code changes needed, SQLAlchemy handles it.

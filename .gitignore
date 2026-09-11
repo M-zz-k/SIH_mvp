@@ -1,33 +1,23 @@
-# Byte-compiled / optimized / DLL files
-__pycache__/
-*.py[cod]
-*$py.class
-
 # Virtual environments
 venv/
 .venv/
 env/
 
-# Environment variables
+# Environment variables & secrets
 .env
 
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Node
-frontend/node_modules/
-frontend/dist/
-
-# Uploads & reports (generated at runtime)
-uploads/
-reports/
-
 # Database
+metroscan.db
 *.sqlite3
+
+# Python cache & build artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Pytest cache
+.pytest_cache/
+
+# Uploads & logs
+uploads/
+*.log
