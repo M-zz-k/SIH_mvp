@@ -22,6 +22,32 @@ function RepositoryPage() {
     return matchesSearch && matchesStatus;
   });
 
+  const handleExportCSV = () => {
+    if (!filteredData || filteredData.length === 0) return;
+    
+    const headers = ['Docket ID', 'Brand', 'Product', 'Status', 'Violation Type', 'Date'];
+    const csvContent = [
+      headers.join(','),
+      ...filteredData.map(item => [
+        `"${item.id}"`,
+        `"${item.brand || ''}"`,
+        `"${item.productName || ''}"`,
+        `"${item.status || ''}"`,
+        `"${item.violationType || ''}"`,
+        `"${item.date || ''}"`
+      ].join(','))
+    ].join('\n');
+    
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `repository_export_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <div className="flex flex-col gap-6">
       
@@ -30,8 +56,8 @@ function RepositoryPage() {
           <h1 className="text-2xl font-bold text-text-primary tracking-tight">Repository (Req 7 & 10)</h1>
           <p className="text-[11px] text-text-muted mt-1 uppercase tracking-widest font-bold">Searchable Dossier Archive</p>
         </div>
-        <button className="px-4 py-2 bg-card text-text-secondary border border-border-subtle text-sm font-bold rounded-xl hover:bg-canvas transition-colors shadow-sm flex items-center justify-center gap-2">
-           <Download className="w-4 h-4 text-text-muted" /> Export CSV
+        <button onClick={handleExportCSV} className="px-4 py-2 bg-secondary text-white text-sm font-bold rounded-xl hover:bg-secondary-dark transition-colors shadow-sm flex items-center justify-center gap-2">
+           <Download className="w-4 h-4" /> Export CSV
         </button>
       </div>
 
@@ -91,10 +117,14 @@ function RepositoryPage() {
                     </div>
                     
                     {/* Task 4: Show a small thumbnail per card */}
-                    <div className="w-full h-32 rounded-lg bg-canvas border border-border-subtle overflow-hidden mb-4 flex items-center justify-center p-2 relative">
+                     <div className="w-full h-32 rounded-lg bg-canvas border border-border-subtle overflow-hidden mb-4 flex items-center justify-center p-2 relative">
                        {item.evidenceImages && item.evidenceImages.length > 0 ? (
                          <>
-                           <img src={item.evidenceImages[0].url} className="max-w-full max-h-full object-contain group-hover:scale-105 transition-transform" />
+                           <img 
+                             src={item.evidenceImages[0].url} 
+                             onError={(e) => e.target.src = "https://placehold.co/400x400/E9EEF4/1B2B44?text=Product+Image"}
+                             className="max-w-full max-h-full object-contain group-hover:scale-105 transition-transform" 
+                           />
                            {item.evidenceImages.length > 1 && (
                              <div className="absolute bottom-2 right-2 bg-text-primary/70 text-white text-[10px] font-bold px-1.5 py-0.5 rounded">
                                +{item.evidenceImages.length - 1} photos
@@ -102,7 +132,11 @@ function RepositoryPage() {
                            )}
                          </>
                        ) : (
-                         <img src={item.image} className="max-w-full max-h-full object-contain group-hover:scale-105 transition-transform" />
+                         <img 
+                           src={item.image} 
+                           onError={(e) => e.target.src = "https://placehold.co/400x400/E9EEF4/1B2B44?text=Product+Image"}
+                           className="max-w-full max-h-full object-contain group-hover:scale-105 transition-transform" 
+                         />
                        )}
                     </div>
 

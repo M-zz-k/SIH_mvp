@@ -39,11 +39,11 @@ function InspectionPage() {
         </div>
         
         <div className="flex gap-3 w-full sm:w-auto">
-          <button className="flex-1 sm:flex-none px-4 py-2 bg-card text-text-secondary border border-border-subtle text-sm font-bold rounded-xl hover:bg-canvas transition-colors shadow-sm flex items-center justify-center gap-2">
-            <Download className="w-4 h-4 text-text-muted" /> PDF Memo
+          <button className="flex-1 sm:flex-none px-4 py-2 bg-secondary text-white text-sm font-bold rounded-xl hover:bg-secondary-dark transition-colors shadow-sm flex items-center justify-center gap-2">
+            <Download className="w-4 h-4" /> PDF Memo
           </button>
-          <button className="flex-1 sm:flex-none px-4 py-2 bg-card text-text-secondary border border-border-subtle text-sm font-bold rounded-xl hover:bg-canvas transition-colors shadow-sm flex items-center justify-center gap-2">
-            <Download className="w-4 h-4 text-text-muted" /> DOCX
+          <button className="flex-1 sm:flex-none px-4 py-2 bg-secondary text-white text-sm font-bold rounded-xl hover:bg-secondary-dark transition-colors shadow-sm flex items-center justify-center gap-2">
+            <Download className="w-4 h-4" /> DOCX
           </button>
           <button className="flex-1 sm:flex-none px-6 py-2 bg-primary text-white border border-primary text-sm font-bold rounded-xl hover:bg-primary-dark transition-colors shadow-sm">
             Sign & Issue Notice

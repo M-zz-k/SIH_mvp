@@ -11,7 +11,7 @@ export function GridContainer({ children, className = '' }) {
 
 export function Card({ children, className = '' }) {
   return (
-    <div className={`bg-card border border-border-subtle rounded-2xl flex flex-col overflow-hidden ${className}`}>
+    <div className={`bg-card rounded-2xl flex flex-col overflow-hidden shadow-[0_8px_25px_rgba(12,45,55,0.06)] hover:-translate-y-1 hover:shadow-[0_12px_35px_rgba(12,45,55,0.1)] transition-all duration-300 ${className}`}>
       {children}
     </div>
   );

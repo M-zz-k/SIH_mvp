@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Camera, Upload, ScanLine, Smartphone, AlertTriangle, CheckCircle, RefreshCw, ChevronRight } from 'lucide-react';
 import { GridContainer, Card, CardBody } from '../components/Primitives';
 import { useNavigate } from 'react-router-dom';
+import { addInspection } from '../services/api';
 
 export default function ScanPage() {
   const navigate = useNavigate();
@@ -130,17 +131,28 @@ export default function ScanPage() {
     if (uploadInputRef.current) uploadInputRef.current.value = '';
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     setIsSubmitting(true);
-    setTimeout(() => {
-      // If quality was flagged, route to a review-pending dossier mock (SKU-104)
-      // If good, route to a compliant mock (SKU-101)
-      if (qualityIssue) {
-        navigate('/inspection/SKU-104'); 
-      } else {
-        navigate('/inspection/SKU-101');
-      }
-    }, 1500);
+    
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    
+    const isViol = !!qualityIssue;
+    const newId = `SCN-${Math.floor(Math.random()*10000)}`;
+    const mockEntry = {
+      id: newId,
+      date: new Date().toISOString().split('T')[0],
+      status: isViol ? 'Needs Officer Review' : 'Likely Compliant',
+      violationType: isViol ? 'Rule 12 Flagged' : null,
+      productName: 'Field Captured Product',
+      brand: 'Unknown',
+      marketplace: 'Offline Retail',
+      category: 'Single Scan',
+      image: previewUrl || 'https://placehold.co/400x400/E9EEF4/1B2B44?text=Scan',
+      evidenceImages: [{ url: previewUrl || 'https://placehold.co/400x400', caption: 'Captured field image' }]
+    };
+    
+    await addInspection(mockEntry);
+    navigate(`/inspection/${newId}`);
   };
 
   return (
