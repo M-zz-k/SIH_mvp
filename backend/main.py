@@ -118,19 +118,18 @@ async def upload_single(file: UploadFile = File(...)):
     """Upload a single product label image and run the full pipeline.
 
     Pipeline: save image → OCR extract → validate rules → hash evidence → generate PDF
-
-    # TODO(Person 2 — Backend Lead): Implement real orchestration:
-    #   1. Save uploaded file to STORAGE_PATH
-    #   2. Call extract_declarations(saved_path) — Person 3's module
-    #   3. Call validate(declarations) — Person 4's module
-    #   4. Call create_evidence_record(saved_path, pdf_path) — Person 5's module
-    #   5. Call generate_pdf(result) — Person 5's module
-    #   6. Call save_inspection(result) — Person 5's module
-    #   7. Return InspectionResult
     """
+    os.makedirs("uploads", exist_ok=True)
+    os.makedirs("reports", exist_ok=True)
 
-    # ---------- MOCK — run stubs in the correct order ----------
-    image_path = f"uploads/{file.filename}"
+    filename = file.filename or f"label_{uuid.uuid4().hex[:8]}.png"
+    image_path = os.path.join("uploads", filename)
+
+    # Save uploaded file bytes to disk
+    contents = await file.read()
+    with open(image_path, "wb") as f:
+        f.write(contents)
+
     inspection_id = str(uuid.uuid4())[:12]
 
     # Step 1: OCR extraction (Person 3)
@@ -157,22 +156,35 @@ async def upload_single(file: UploadFile = File(...)):
 
 @app.post("/upload/bulk")
 async def upload_bulk(files: List[UploadFile] = File(...)):
-    """Upload multiple product label images (bulk inspection).
+    """Upload multiple product label images (bulk inspection)."""
+    os.makedirs("uploads", exist_ok=True)
+    os.makedirs("reports", exist_ok=True)
 
-    # TODO(Person 2 — Backend Lead): Implement:
-    #   1. Accept multiple files or a CSV of image URLs
-    #   2. Process each through the same pipeline as /upload/single
-    #   3. Return a list of InspectionResults
-    #   4. Consider async processing for large batches
-    """
+    saved_paths = []
+    for file in files:
+        filename = file.filename or f"label_{uuid.uuid4().hex[:8]}.png"
+        path = os.path.join("uploads", filename)
+        contents = await file.read()
+        with open(path, "wb") as f:
+            f.write(contents)
+        saved_paths.append(path)
 
-    # ---------- MOCK — return mock data for each file ----------
     results = []
-    for i, file in enumerate(files):
-        mock = MOCK_RESULTS[i % len(MOCK_RESULTS)].copy()
-        mock["id"] = str(uuid.uuid4())[:12]
-        mock["product_name"] = file.filename or f"Product {i+1}"
-        results.append(mock)
+    for i, path in enumerate(saved_paths):
+        inspection_id = str(uuid.uuid4())[:12]
+        declarations = extract_declarations(path)
+        compliance_result = validate(declarations)
+        evidence = create_evidence_record(path, f"reports/{inspection_id}.pdf")
+
+        result = InspectionResult(
+            id=inspection_id,
+            product_name=files[i].filename or f"Product {i+1}",
+            created_at=datetime.utcnow(),
+            declarations=declarations,
+            compliance_result=compliance_result,
+            evidence=evidence,
+        )
+        results.append(result.model_dump())
 
     return {"results": results, "total": len(results)}
 

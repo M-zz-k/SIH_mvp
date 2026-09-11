@@ -1,0 +1,77 @@
+{
+  "language": "en",
+  "blocks": [
+    {
+      "text": "M.R.P.: Rs 99.00 (Incl. of all taxes)",
+      "confidence": 0.95,
+      "lines": [
+        {
+          "text": "M.R.P.: Rs 99.00 (Incl. of all taxes)",
+          "confidence": 0.95,
+          "boundingBox": {
+            "left": 50,
+            "top": 120,
+            "right": 380,
+            "bottom": 150,
+            "width": 330,
+            "height": 30
+          }
+        }
+      ]
+    },
+    {
+      "text": "Net Quantity: 250 g",
+      "confidence": 0.92,
+      "lines": [
+        {
+          "text": "Net Quantity: 250 g",
+          "confidence": 0.92,
+          "boundingBox": {
+            "left": 50,
+            "top": 160,
+            "right": 240,
+            "bottom": 188,
+            "width": 190,
+            "height": 28
+          }
+        }
+      ]
+    },
+    {
+      "text": "Manufactured by: Parle Products Pvt Ltd, Mumbai 400057",
+      "confidence": 0.89,
+      "lines": [
+        {
+          "text": "Manufactured by: Parle Products Pvt Ltd, Mumbai 400057",
+          "confidence": 0.89,
+          "boundingBox": {
+            "left": 50,
+            "top": 200,
+            "right": 490,
+            "bottom": 232,
+            "width": 440,
+            "height": 32
+          }
+        }
+      ]
+    },
+    {
+      "text": "Best Before 6 Months from Mfg",
+      "confidence": 0.84,
+      "lines": [
+        {
+          "text": "Best Before 6 Months from Mfg",
+          "confidence": 0.84,
+          "boundingBox": {
+            "left": 50,
+            "top": 245,
+            "right": 320,
+            "bottom": 273,
+            "width": 270,
+            "height": 28
+          }
+        }
+      ]
+    }
+  ]
+}
