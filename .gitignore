@@ -2,6 +2,8 @@
 __pycache__/
 *.py[cod]
 *$py.class
+*.pyc
+*.pyo
 
 # Virtual environments
 venv/
@@ -31,3 +33,8 @@ reports/
 
 # Database
 *.sqlite3
+
+# Output & Build
+output/
+*.egg-info/
+
