@@ -1,0 +1,75 @@
+METROSCAN AI - PROTOTYPE OVERVIEW
+================================================================================
+
+This platform is designed to automate the enforcement of the Legal Metrology (Packaged Commodities) Rules by analyzing product images (both from the field and from e-commerce) and flagging violations.
+
+Currently, it operates entirely on the frontend using a robust mock dataset to simulate the AI/Backend processing.
+
+--------------------------------------------------------------------------------
+1. Login & Role Simulation (/login)
+--------------------------------------------------------------------------------
+The entry point of the app simulates Role-Based Access Control (RBAC).
+* Features: You can log in as an Inspector (field officer), Supervisor (HQ approval), or System Admin (configuration).
+* How it works: Selecting a role saves it to your browser's local storage and dynamically adjusts what capabilities you have access to later on (like the capability matrix in Settings).
+
+--------------------------------------------------------------------------------
+2. Executive Command / Dashboard (/dashboard)
+--------------------------------------------------------------------------------
+This is the high-level operational overview for supervisors and admins to monitor platform health and enforcement metrics.
+* Features:
+  - KPI Row: Real-time stats on Overall Compliance %, items needing review, and total violations.
+  - Trend Chart: A visual comparison of Total Scans vs. Violations over a selected time period.
+  - Category Breakdown: Shows which product categories (e.g., Food & Grocery vs. Imported Goods) have the highest compliance rates.
+  - Top Violations: Ranks the most common infractions (e.g., "Non-standard unit").
+  - Urgent Alerts: Automatically surfaces the most severe active violation so it can be actioned immediately.
+* How it works: It dynamically calculates all of these numbers on the fly by reading the mock database.
+
+--------------------------------------------------------------------------------
+3. Bulk Ingestion (/bulk-upload)
+--------------------------------------------------------------------------------
+Designed for scraping e-commerce platforms or processing large batches of images from a desktop.
+* Features: Features a drag-and-drop zone for ZIP/CSV files. Once dropped, it simulates a live progress bar (Parsing -> Queuing -> Rule Engine).
+* How it works: Below the upload zone, it displays a real-time feed of processed items, immediately categorizing them as "Compliant", "Review", or "Flagged" based on the simulated AI extraction.
+
+--------------------------------------------------------------------------------
+4. Field Dossiers / Repository (/repository)
+--------------------------------------------------------------------------------
+The central database of all historical and active scans.
+* Features: A searchable, filterable grid of all product dossiers. It displays product thumbnails (with badges showing how many evidence photos are attached), docket IDs, and the overall status.
+* How it works: You can search by brand, docket ID, or filter by status. Clicking any card opens the deep-dive Inspection Detail view.
+
+--------------------------------------------------------------------------------
+5. Single Scan (/scan)
+--------------------------------------------------------------------------------
+The mobile-first tool for Field Inspectors physically looking at products in stores.
+* Features:
+  - Native Camera Launch: Uses standard browser APIs to open the phone's rear camera directly.
+  - Smart Framing & Quality Gate: Displays a framing overlay to guide the officer. Before accepting the photo, it runs client-side AI (Canvas API) to check if the image is too blurry (Laplacian variance) or too dark (Luminance).
+* How it works: If the photo is blurry, it warns the user to retake it. If the user clicks "Use Anyway," it simulates passing a low-confidence flag to the backend, resulting in a "Needs Officer Review" status.
+
+--------------------------------------------------------------------------------
+6. Inspection Detail / Dossier View (/inspection/[id])
+--------------------------------------------------------------------------------
+The core "Engine Room" of the application where an individual product is judged against the law.
+* Features:
+  - Bounding Box Viewer: The product image is overlaid with interactive boxes. Green = Good, Yellow = Suspect, Red = Violation. Hovering over a box reveals details (e.g., the exact font-size ratio to see if text is too small to read).
+  - Evidence Gallery: A scrollable strip of raw evidentiary photos, secured with simulated SHA-256 cryptographic hashes for legal chain-of-custody.
+  - Extracted Metadata: A clean table showing what the OCR read (Brand, Net Quantity, MRP).
+  - Statutory Checklist: Evaluates the metadata against specific laws (e.g., Rule 12 demands "1 kg", not "1000 gms"; Rule 6 demands MRP includes all taxes).
+  - Actions: Buttons to generate and download PDF/DOCX legal memos or issue notices.
+
+--------------------------------------------------------------------------------
+7. Regional Analytics (/analytics)
+--------------------------------------------------------------------------------
+A deep-dive visualization screen for identifying systemic issues.
+* Features: Shows state-wise non-compliance percentages (e.g., Maharashtra at 18.2%), average resolution times, and a comparative chart mapping which specific rules (Rule 6 vs. Rule 12) are being violated the most over time.
+
+--------------------------------------------------------------------------------
+8. System Settings (/settings)
+--------------------------------------------------------------------------------
+Configuration and preferences.
+* Features: Allows the user to edit their profile details, set notification preferences (e.g., Daily Digests, High-Severity Emails), and view a read-only Capability Matrix that confirms what their current Role is legally allowed to do in the system.
+
+================================================================================
+The Visual Theme:
+The entire application was built on a custom 12-column grid system using shared components. The global styling tokens use a Dark Navy/Off-Black sidebar with Muted Olive/Sage Green accents, giving it a highly professional, authoritative aesthetic perfectly suited for a government compliance tool.

@@ -1,155 +1,134 @@
-/**
- * Repository / Search Page — Part of Person 1 (Frontend Lead)'s workspace
- *
- * Displays all past inspection results in a searchable, filterable table.
- * Supports filtering by tier and free-text search by product name.
- *
- * Currently renders all entries from mock_data.json.
- *
- * TODO(Person 1): Wire to GET /results/search/query with query params.
- */
+import React, { useEffect, useState } from 'react';
+import { Search, Filter, Download } from 'lucide-react';
+import { fetchInspections } from '../services/api';
+import { useNavigate } from 'react-router-dom';
+import { GridContainer, Card, CardHeader, CardBody, StatusChip } from '../components/Primitives';
 
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import mockData from '../data/mock_data.json'
+function RepositoryPage() {
+  const [data, setData] = useState([]);
+  const [search, setSearch] = useState('');
+  const [filterStatus, setFilterStatus] = useState('All');
+  const navigate = useNavigate();
 
-const TIERS = [
-  { value: '', label: 'All Tiers' },
-  { value: 'likely_compliant', label: '✅ Compliant' },
-  { value: 'needs_review', label: '⚠️ Needs Review' },
-  { value: 'likely_violation', label: '🚫 Violation' },
-]
+  useEffect(() => {
+    fetchInspections().then((res) => setData(res));
+  }, []);
 
-export default function RepositoryPage() {
-  const navigate = useNavigate()
-  const [search, setSearch] = useState('')
-  const [tierFilter, setTierFilter] = useState('')
-
-  // TODO(Person 1): Replace with API call:
-  //   const [results, setResults] = useState([])
-  //   useEffect(() => {
-  //     fetch(`/api/results/search/query?q=${search}&tier=${tierFilter}`)
-  //       .then(r => r.json())
-  //       .then(d => setResults(d.results))
-  //   }, [search, tierFilter])
-
-  const filtered = mockData.filter((r) => {
-    const matchesSearch = !search || r.product_name.toLowerCase().includes(search.toLowerCase())
-    const matchesTier = !tierFilter || r.compliance_result.tier === tierFilter
-    return matchesSearch && matchesTier
-  })
-
-  // Stats from filtered data
-  const stats = {
-    total: filtered.length,
-    compliant: filtered.filter(r => r.compliance_result.tier === 'likely_compliant').length,
-    review: filtered.filter(r => r.compliance_result.tier === 'needs_review').length,
-    violation: filtered.filter(r => r.compliance_result.tier === 'likely_violation').length,
-  }
+  const filteredData = data.filter(item => {
+    const matchesSearch = item.productName.toLowerCase().includes(search.toLowerCase()) || 
+                          item.id.toLowerCase().includes(search.toLowerCase()) ||
+                          item.brand.toLowerCase().includes(search.toLowerCase());
+    const matchesStatus = filterStatus === 'All' || item.status === filterStatus;
+    return matchesSearch && matchesStatus;
+  });
 
   return (
-    <div className="max-w-6xl mx-auto px-6 py-10">
-      <h1 className="text-3xl font-bold mb-2">Inspection Repository</h1>
-      <p className="text-slate-400 mb-8">Search and review all past inspections</p>
-
-      {/* Stats row */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-        {[
-          { label: 'Total', value: stats.total, color: 'text-slate-200', bg: 'bg-white/5' },
-          { label: 'Compliant', value: stats.compliant, color: 'text-compliant', bg: 'bg-compliant/10' },
-          { label: 'Needs Review', value: stats.review, color: 'text-review', bg: 'bg-review/10' },
-          { label: 'Violations', value: stats.violation, color: 'text-violation', bg: 'bg-violation/10' },
-        ].map(({ label, value, color, bg }) => (
-          <div key={label} className={`rounded-xl p-4 ${bg} border border-white/5`}>
-            <div className={`text-2xl font-bold ${color}`}>{value}</div>
-            <div className="text-xs text-slate-500 mt-1">{label}</div>
-          </div>
-        ))}
+    <div className="flex flex-col gap-6">
+      
+      <div className="flex items-end justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-text-primary tracking-tight">Repository (Req 7 & 10)</h1>
+          <p className="text-[11px] text-text-muted mt-1 uppercase tracking-widest font-bold">Searchable Dossier Archive</p>
+        </div>
+        <button className="px-4 py-2 bg-card text-text-secondary border border-border-subtle text-sm font-bold rounded-xl hover:bg-canvas transition-colors shadow-sm flex items-center justify-center gap-2">
+           <Download className="w-4 h-4 text-text-muted" /> Export CSV
+        </button>
       </div>
 
-      {/* Search & filter bar */}
-      <div className="flex flex-col sm:flex-row gap-3 mb-6">
-        <div className="relative flex-1">
-          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500">🔍</span>
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search by product name…"
-            className="w-full pl-10 pr-4 py-3 rounded-xl bg-surface-light border border-white/10 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
-          />
-        </div>
-        <div className="flex gap-2">
-          {TIERS.map(({ value, label }) => (
-            <button
-              key={value}
-              onClick={() => setTierFilter(value)}
-              className={`px-4 py-3 rounded-xl text-sm font-medium transition-all cursor-pointer whitespace-nowrap ${
-                tierFilter === value
-                  ? 'bg-primary/20 text-primary-light border border-primary/30'
-                  : 'bg-surface-light text-slate-400 border border-white/5 hover:border-white/15'
-              }`}
+      <Card>
+        <CardBody className="flex flex-col lg:flex-row lg:items-center gap-4">
+          <div className="relative flex-1">
+            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+              <Search className="w-5 h-5 text-text-muted" />
+            </div>
+            <input 
+              type="text" 
+              placeholder="Search by Docket ID, Brand, or Keyword..." 
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full pl-12 pr-4 py-3 bg-canvas border border-border-subtle rounded-xl text-sm font-medium shadow-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
+            />
+          </div>
+          
+          <div className="flex items-center gap-3">
+            <Filter className="w-5 h-5 text-text-muted" />
+            <select 
+              value={filterStatus}
+              onChange={(e) => setFilterStatus(e.target.value)}
+              className="bg-card border border-border-subtle rounded-xl text-sm py-3 px-4 shadow-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary text-text-secondary font-bold min-w-[160px]"
             >
-              {label}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Results table */}
-      <div className="glass rounded-xl overflow-hidden">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b border-white/5">
-              <th className="text-left px-5 py-3.5 text-slate-500 font-medium">Product</th>
-              <th className="text-left px-5 py-3.5 text-slate-500 font-medium">Date</th>
-              <th className="text-left px-5 py-3.5 text-slate-500 font-medium">Tier</th>
-              <th className="text-left px-5 py-3.5 text-slate-500 font-medium">Fields</th>
-              <th className="text-right px-5 py-3.5 text-slate-500 font-medium">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filtered.map((r) => {
-              const passCount = r.compliance_result.compliance.filter(c => c.status === 'pass').length
-              const totalFields = r.compliance_result.compliance.length
-              return (
-                <tr
-                  key={r.id}
-                  className="border-b border-white/5 last:border-0 hover:bg-white/[0.02] transition-colors cursor-pointer"
-                  onClick={() => navigate(`/results/${r.id}`)}
-                >
-                  <td className="px-5 py-4">
-                    <div className="font-medium text-slate-200">{r.product_name}</div>
-                    <div className="text-xs text-slate-500 font-mono">{r.id}</div>
-                  </td>
-                  <td className="px-5 py-4 text-slate-400">
-                    {new Date(r.created_at).toLocaleDateString()}
-                  </td>
-                  <td className="px-5 py-4">
-                    <span className={`tier-${r.compliance_result.tier} px-3 py-1 rounded-lg text-xs font-bold`}>
-                      {r.compliance_result.tier.replace(/_/g, ' ')}
-                    </span>
-                  </td>
-                  <td className="px-5 py-4 text-slate-400">
-                    <span className="text-compliant">{passCount}</span>/{totalFields} pass
-                  </td>
-                  <td className="px-5 py-4 text-right">
-                    <span className="text-primary-light hover:text-primary transition-colors text-xs font-medium">
-                      View →
-                    </span>
-                  </td>
-                </tr>
-              )
-            })}
-          </tbody>
-        </table>
-
-        {filtered.length === 0 && (
-          <div className="text-center py-12 text-slate-500">
-            No inspections match your search.
+              <option value="All">All Statuses</option>
+              <option value="Likely Compliant">Compliant</option>
+              <option value="Needs Officer Review">Review Pending</option>
+              <option value="Likely Violation">Violation</option>
+            </select>
           </div>
+        </CardBody>
+      </Card>
+
+      <GridContainer>
+        {filteredData.length === 0 ? (
+          <Card className="col-span-1 md:col-span-2 lg:col-span-12 py-20 text-center text-text-muted bg-canvas">
+            <p className="font-bold text-sm tracking-wide">No dossiers match your criteria.</p>
+          </Card>
+        ) : (
+          filteredData.map((item) => (
+            <Card 
+              key={item.id} 
+              className="col-span-1 md:col-span-1 lg:col-span-4 xl:col-span-3 hover:border-primary hover:shadow-md transition-all cursor-pointer group h-auto"
+            >
+              <div className="h-full flex flex-col" onClick={() => navigate(`/inspection/${item.id}`)}>
+                <CardBody className="flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-start justify-between mb-4">
+                      <StatusChip 
+                        status={item.status === 'Likely Compliant' ? 'compliant' : item.status === 'Needs Officer Review' ? 'review' : 'violation'}
+                        label={item.status === 'Likely Compliant' ? 'Resolved' : item.status === 'Needs Officer Review' ? 'Pending' : 'Violation'}
+                      />
+                      <span className="text-[11px] font-mono font-bold text-text-muted border border-border-subtle bg-canvas px-2 py-0.5 rounded-md">
+                        {item.id}
+                      </span>
+                    </div>
+                    
+                    {/* Task 4: Show a small thumbnail per card */}
+                    <div className="w-full h-32 rounded-lg bg-canvas border border-border-subtle overflow-hidden mb-4 flex items-center justify-center p-2 relative">
+                       {item.evidenceImages && item.evidenceImages.length > 0 ? (
+                         <>
+                           <img src={item.evidenceImages[0].url} className="max-w-full max-h-full object-contain group-hover:scale-105 transition-transform" />
+                           {item.evidenceImages.length > 1 && (
+                             <div className="absolute bottom-2 right-2 bg-text-primary/70 text-white text-[10px] font-bold px-1.5 py-0.5 rounded">
+                               +{item.evidenceImages.length - 1} photos
+                             </div>
+                           )}
+                         </>
+                       ) : (
+                         <img src={item.image} className="max-w-full max-h-full object-contain group-hover:scale-105 transition-transform" />
+                       )}
+                    </div>
+
+                    <h3 className="font-bold text-text-primary text-sm line-clamp-1 mb-1">{item.brand}</h3>
+                    <p className="text-xs text-text-secondary font-medium line-clamp-1 mb-4">{item.productName}</p>
+                  </div>
+                  
+                  <div className="pt-4 border-t border-border-subtle mt-auto flex items-center justify-between">
+                    {item.violationType ? (
+                      <div className="text-[10px] font-bold text-status-err-text line-clamp-1 uppercase tracking-widest bg-status-err-bg border border-status-err-border px-2 py-1 rounded">
+                        {item.violationType}
+                      </div>
+                    ) : (
+                      <div className="text-[10px] font-bold text-status-ok-text line-clamp-1 uppercase tracking-widest bg-status-ok-bg border border-status-ok-border px-2 py-1 rounded">
+                        Compliant
+                      </div>
+                    )}
+                  </div>
+                </CardBody>
+              </div>
+            </Card>
+          ))
         )}
-      </div>
+      </GridContainer>
     </div>
-  )
+  );
 }
+
+export default RepositoryPage;

@@ -1,0 +1,224 @@
+[
+  {
+    "id": "SKU-101",
+    "productName": "Aashirvaad Whole Wheat Atta",
+    "brand": "Aashirvaad",
+    "category": "Food & Grocery",
+    "marketplace": "Amazon",
+    "timestamp": "2024-10-12T10:30:00Z",
+    "status": "Likely Compliant",
+    "netQuantity": "5 kg",
+    "mrp": "250.00",
+    "violationType": null,
+    "image": "https://m.media-amazon.com/images/I/71rP1B2x5bL._SX679_.jpg",
+    "evidenceImages": [
+      { "id": "ev1", "url": "https://m.media-amazon.com/images/I/71rP1B2x5bL._SX679_.jpg", "hash": "8f434346648f6b96e" },
+      { "id": "ev2", "url": "https://m.media-amazon.com/images/I/71rP1B2x5bL._SX679_.jpg", "hash": "9d3b4e78a2c1f900d" }
+    ],
+    "boundingBoxes": [
+      { "id": 1, "type": "Brand", "x": 10, "y": 10, "width": 80, "height": 15, "color": "green" },
+      { "id": 2, "type": "Net Quantity", "x": 10, "y": 80, "width": 40, "height": 10, "color": "green", "details": "Standard Weight", "fontRatio": "85%" },
+      { "id": 3, "type": "MRP", "x": 60, "y": 80, "width": 30, "height": 10, "color": "green", "details": "Includes all taxes" }
+    ],
+    "checklist": {
+      "rule6_1_a": { "status": "compliant", "desc": "Manufacturer info present" },
+      "rule6_1_b": { "status": "compliant", "desc": "Net quantity present" },
+      "rule6_1_e": { "status": "compliant", "desc": "Retail sale price present" },
+      "rule12": { "status": "compliant", "desc": "Standard units used" },
+      "rule6_10": { "status": "compliant", "desc": "N/A - Domestic product" }
+    }
+  },
+  {
+    "id": "SKU-102",
+    "productName": "Pillsbury Chakki Fresh Atta",
+    "brand": "Pillsbury",
+    "category": "Food & Grocery",
+    "marketplace": "Flipkart",
+    "timestamp": "2024-10-12T11:15:00Z",
+    "status": "Likely Violation",
+    "netQuantity": "1000 gms",
+    "mrp": "60.00",
+    "violationType": "Rule 12 (Non-standard unit)",
+    "image": "https://m.media-amazon.com/images/I/61K2cI7j-XL._SX679_.jpg",
+    "evidenceImages": [
+      { "id": "ev1", "url": "https://m.media-amazon.com/images/I/61K2cI7j-XL._SX679_.jpg", "hash": "b2c1f900d8f434346" },
+      { "id": "ev2", "url": "https://m.media-amazon.com/images/I/61K2cI7j-XL._SX679_.jpg", "hash": "c3d4e5f6g7h8i9j0k" }
+    ],
+    "boundingBoxes": [
+      { "id": 1, "type": "Brand", "x": 15, "y": 10, "width": 70, "height": 20, "color": "green" },
+      { "id": 2, "type": "Net Quantity", "x": 15, "y": 75, "width": 50, "height": 15, "color": "red", "details": "Violation: Must use '1 kg' instead of '1000 gms'" },
+      { "id": 3, "type": "MRP", "x": 70, "y": 75, "width": 20, "height": 15, "color": "green" }
+    ],
+    "checklist": {
+      "rule6_1_a": { "status": "compliant", "desc": "Manufacturer info present" },
+      "rule6_1_b": { "status": "compliant", "desc": "Net quantity present" },
+      "rule6_1_e": { "status": "compliant", "desc": "Retail sale price present" },
+      "rule12": { "status": "violation", "desc": "Net quantity given in grams — Rule 12 requires standard units (1 kg)" },
+      "rule6_10": { "status": "compliant", "desc": "N/A - Domestic product" }
+    }
+  },
+  {
+    "id": "SKU-103",
+    "productName": "Lindt Excellence Dark Chocolate",
+    "brand": "Lindt",
+    "category": "Imported Goods",
+    "marketplace": "Blinkit",
+    "timestamp": "2024-10-12T11:45:00Z",
+    "status": "Likely Violation",
+    "netQuantity": "100 g",
+    "mrp": "350.00",
+    "violationType": "Rule 6(10) (Missing Origin)",
+    "image": "https://m.media-amazon.com/images/I/71mRk22zEwL._SX679_.jpg",
+    "evidenceImages": [
+      { "id": "ev1", "url": "https://m.media-amazon.com/images/I/71mRk22zEwL._SX679_.jpg", "hash": "c3d4e5f6g7h8i9j0k" }
+    ],
+    "boundingBoxes": [
+      { "id": 1, "type": "Brand", "x": 20, "y": 20, "width": 60, "height": 20, "color": "green" },
+      { "id": 2, "type": "Importer Info", "x": 10, "y": 60, "width": 80, "height": 30, "color": "red", "details": "Violation: Country of Origin missing on imported product" }
+    ],
+    "checklist": {
+      "rule6_1_a": { "status": "compliant", "desc": "Importer info present" },
+      "rule6_1_b": { "status": "compliant", "desc": "Net quantity present" },
+      "rule6_1_e": { "status": "compliant", "desc": "Retail sale price present" },
+      "rule12": { "status": "compliant", "desc": "Standard units used" },
+      "rule6_10": { "status": "violation", "desc": "Country of origin is missing on imported product." }
+    }
+  },
+  {
+    "id": "SKU-104",
+    "productName": "Himalayan Natural Mineral Water",
+    "brand": "Himalayan",
+    "category": "Food & Grocery",
+    "marketplace": "Zepto",
+    "timestamp": "2024-10-12T12:30:00Z",
+    "status": "Needs Officer Review",
+    "netQuantity": "1 L",
+    "mrp": "60.00",
+    "violationType": "Font Ratio Suspect",
+    "image": "https://m.media-amazon.com/images/I/51wXpMh2YvL._SX679_.jpg",
+    "evidenceImages": [
+      { "id": "ev1", "url": "https://m.media-amazon.com/images/I/51wXpMh2YvL._SX679_.jpg", "hash": "x1y2z3a4b5c6d7e8f" }
+    ],
+    "boundingBoxes": [
+      { "id": 1, "type": "Brand", "x": 30, "y": 30, "width": 40, "height": 20, "color": "green" },
+      { "id": 2, "type": "Declarations", "x": 20, "y": 70, "width": 60, "height": 20, "color": "yellow", "details": "Warning: Font ratio to principal display panel seems low", "fontRatio": "62%" }
+    ],
+    "checklist": {
+      "rule6_1_a": { "status": "compliant", "desc": "Manufacturer info present" },
+      "rule6_1_b": { "status": "compliant", "desc": "Net quantity present" },
+      "rule6_1_e": { "status": "review", "desc": "62% of brand name height — below threshold for readability." },
+      "rule12": { "status": "compliant", "desc": "Standard units used" },
+      "rule6_10": { "status": "compliant", "desc": "N/A" }
+    }
+  },
+  {
+    "id": "SKU-105",
+    "productName": "Fortune Sunlite Refined Oil",
+    "brand": "Fortune",
+    "category": "Food & Grocery",
+    "marketplace": "BigBasket",
+    "timestamp": "2024-10-12T13:15:00Z",
+    "status": "Needs Officer Review",
+    "netQuantity": "1 L",
+    "mrp": "150.00",
+    "violationType": "Low OCR Confidence",
+    "image": "https://m.media-amazon.com/images/I/61YFkFpI6AL._SX679_.jpg",
+    "evidenceImages": [
+      { "id": "ev1", "url": "https://m.media-amazon.com/images/I/61YFkFpI6AL._SX679_.jpg", "hash": "1a2b3c4d5e6f7g8h9" }
+    ],
+    "boundingBoxes": [
+      { "id": 1, "type": "Brand", "x": 20, "y": 15, "width": 60, "height": 20, "color": "green" },
+      { "id": 2, "type": "MRP & Date", "x": 10, "y": 80, "width": 80, "height": 15, "color": "yellow", "details": "Review: Smudged text, OCR confidence below threshold" }
+    ],
+    "checklist": {
+      "rule6_1_a": { "status": "compliant", "desc": "Manufacturer info present" },
+      "rule6_1_b": { "status": "review", "desc": "Smudged text, OCR confidence below threshold." },
+      "rule6_1_e": { "status": "compliant", "desc": "MRP visible" },
+      "rule12": { "status": "compliant", "desc": "Standard units used" },
+      "rule6_10": { "status": "compliant", "desc": "N/A" }
+    }
+  },
+  {
+    "id": "SKU-106",
+    "productName": "Tata Salt",
+    "brand": "Tata",
+    "category": "Food & Grocery",
+    "marketplace": "Amazon",
+    "timestamp": "2024-10-12T14:00:00Z",
+    "status": "Likely Compliant",
+    "netQuantity": "1 kg",
+    "mrp": "25.00",
+    "violationType": null,
+    "image": "https://m.media-amazon.com/images/I/61K9o2c0lLL._SX679_.jpg",
+    "evidenceImages": [
+      { "id": "ev1", "url": "https://m.media-amazon.com/images/I/61K9o2c0lLL._SX679_.jpg", "hash": "k8j7h6g5f4d3s2a1" }
+    ],
+    "boundingBoxes": [
+      { "id": 1, "type": "Brand", "x": 10, "y": 10, "width": 40, "height": 20, "color": "green" },
+      { "id": 2, "type": "Net Quantity", "x": 10, "y": 70, "width": 30, "height": 10, "color": "green" },
+      { "id": 3, "type": "MRP", "x": 60, "y": 70, "width": 30, "height": 10, "color": "green" }
+    ],
+    "checklist": {
+      "rule6_1_a": { "status": "compliant", "desc": "Manufacturer info present" },
+      "rule6_1_b": { "status": "compliant", "desc": "Net quantity present" },
+      "rule6_1_e": { "status": "compliant", "desc": "Retail sale price present" },
+      "rule12": { "status": "compliant", "desc": "Standard units used" },
+      "rule6_10": { "status": "compliant", "desc": "N/A - Domestic product" }
+    }
+  },
+  {
+    "id": "SKU-107",
+    "productName": "Apple iPhone 15 Pro",
+    "brand": "Apple",
+    "category": "Electronics",
+    "marketplace": "Flipkart",
+    "timestamp": "2024-10-12T14:30:00Z",
+    "status": "Likely Violation",
+    "netQuantity": "1 U",
+    "mrp": "134900.00",
+    "violationType": "MRP Format Error",
+    "image": "https://m.media-amazon.com/images/I/81+GIkwqLIL._SX679_.jpg",
+    "evidenceImages": [
+      { "id": "ev1", "url": "https://m.media-amazon.com/images/I/81+GIkwqLIL._SX679_.jpg", "hash": "q1w2e3r4t5y6u7i8" }
+    ],
+    "boundingBoxes": [
+      { "id": 1, "type": "Brand", "x": 20, "y": 20, "width": 60, "height": 20, "color": "green" },
+      { "id": 2, "type": "MRP", "x": 60, "y": 80, "width": 20, "height": 10, "color": "red", "details": "Violation: Misleading MRP tax text" }
+    ],
+    "checklist": {
+      "rule6_1_a": { "status": "compliant", "desc": "Manufacturer info present" },
+      "rule6_1_b": { "status": "compliant", "desc": "Net quantity present" },
+      "rule6_1_e": { "status": "violation", "desc": "MRP format excludes taxes implicitly." },
+      "rule12": { "status": "compliant", "desc": "Standard units used" },
+      "rule6_10": { "status": "compliant", "desc": "Origin declared" }
+    }
+  },
+  {
+    "id": "SKU-108",
+    "productName": "Maggi 2-Minute Noodles",
+    "brand": "Nestle",
+    "category": "Food & Grocery",
+    "marketplace": "Blinkit",
+    "timestamp": "2024-10-12T15:00:00Z",
+    "status": "Likely Compliant",
+    "netQuantity": "280 g",
+    "mrp": "56.00",
+    "violationType": null,
+    "image": "https://m.media-amazon.com/images/I/71P4r1TDBoL._SX679_.jpg",
+    "evidenceImages": [
+      { "id": "ev1", "url": "https://m.media-amazon.com/images/I/71P4r1TDBoL._SX679_.jpg", "hash": "o9p0l1k2j3h4g5f6" }
+    ],
+    "boundingBoxes": [
+      { "id": 1, "type": "Brand", "x": 10, "y": 10, "width": 50, "height": 20, "color": "green" },
+      { "id": 2, "type": "Net Quantity", "x": 10, "y": 70, "width": 40, "height": 10, "color": "green" },
+      { "id": 3, "type": "MRP", "x": 60, "y": 70, "width": 30, "height": 10, "color": "green" }
+    ],
+    "checklist": {
+      "rule6_1_a": { "status": "compliant", "desc": "Manufacturer info present" },
+      "rule6_1_b": { "status": "compliant", "desc": "Net quantity present" },
+      "rule6_1_e": { "status": "compliant", "desc": "Retail sale price present" },
+      "rule12": { "status": "compliant", "desc": "Standard units used" },
+      "rule6_10": { "status": "compliant", "desc": "N/A - Domestic product" }
+    }
+  }
+]
