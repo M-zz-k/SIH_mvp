@@ -1,0 +1,42 @@
+[
+  {
+    "label": "reference",
+    "text": "",
+    "bbox": {
+      "x": 874,
+      "y": 553,
+      "width": 212,
+      "height": 100
+    }
+  },
+  {
+    "label": "net quantity",
+    "text": "",
+    "bbox": {
+      "x": 263,
+      "y": 311,
+      "width": 139,
+      "height": 71
+    }
+  },
+  {
+    "label": "mrp",
+    "text": "",
+    "bbox": {
+      "x": 62,
+      "y": 422,
+      "width": 119,
+      "height": 46
+    }
+  },
+  {
+    "label": "ingredients",
+    "text": "",
+    "bbox": {
+      "x": 582,
+      "y": 347,
+      "width": 496,
+      "height": 27
+    }
+  }
+]
