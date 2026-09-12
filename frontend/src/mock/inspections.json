@@ -10,22 +10,72 @@
     "netQuantity": "5 kg",
     "mrp": "250.00",
     "violationType": null,
-    "image": "https://m.media-amazon.com/images/I/71rP1B2x5bL._SX679_.jpg",
+    "image": "/products/aashirvaad_atta.jpg",
     "evidenceImages": [
-      { "id": "ev1", "url": "https://m.media-amazon.com/images/I/71rP1B2x5bL._SX679_.jpg", "hash": "8f434346648f6b96e" },
-      { "id": "ev2", "url": "https://m.media-amazon.com/images/I/71rP1B2x5bL._SX679_.jpg", "hash": "9d3b4e78a2c1f900d" }
+      {
+        "id": "ev1",
+        "url": "/products/aashirvaad_atta.jpg",
+        "hash": "8f434346648f6b96e"
+      },
+      {
+        "id": "ev2",
+        "url": "/products/aashirvaad_atta.jpg",
+        "hash": "9d3b4e78a2c1f900d"
+      }
     ],
     "boundingBoxes": [
-      { "id": 1, "type": "Brand", "x": 10, "y": 10, "width": 80, "height": 15, "color": "green" },
-      { "id": 2, "type": "Net Quantity", "x": 10, "y": 80, "width": 40, "height": 10, "color": "green", "details": "Standard Weight", "fontRatio": "85%" },
-      { "id": 3, "type": "MRP", "x": 60, "y": 80, "width": 30, "height": 10, "color": "green", "details": "Includes all taxes" }
+      {
+        "id": 1,
+        "type": "Brand",
+        "x": 10,
+        "y": 10,
+        "width": 80,
+        "height": 15,
+        "color": "green"
+      },
+      {
+        "id": 2,
+        "type": "Net Quantity",
+        "x": 10,
+        "y": 80,
+        "width": 40,
+        "height": 10,
+        "color": "green",
+        "details": "Standard Weight",
+        "fontRatio": "85%"
+      },
+      {
+        "id": 3,
+        "type": "MRP",
+        "x": 60,
+        "y": 80,
+        "width": 30,
+        "height": 10,
+        "color": "green",
+        "details": "Includes all taxes"
+      }
     ],
     "checklist": {
-      "rule6_1_a": { "status": "compliant", "desc": "Manufacturer info present" },
-      "rule6_1_b": { "status": "compliant", "desc": "Net quantity present" },
-      "rule6_1_e": { "status": "compliant", "desc": "Retail sale price present" },
-      "rule12": { "status": "compliant", "desc": "Standard units used" },
-      "rule6_10": { "status": "compliant", "desc": "N/A - Domestic product" }
+      "rule6_1_a": {
+        "status": "compliant",
+        "desc": "Manufacturer info present"
+      },
+      "rule6_1_b": {
+        "status": "compliant",
+        "desc": "Net quantity present"
+      },
+      "rule6_1_e": {
+        "status": "compliant",
+        "desc": "Retail sale price present"
+      },
+      "rule12": {
+        "status": "compliant",
+        "desc": "Standard units used"
+      },
+      "rule6_10": {
+        "status": "compliant",
+        "desc": "N/A - Domestic product"
+      }
     }
   },
   {
@@ -39,22 +89,70 @@
     "netQuantity": "1000 gms",
     "mrp": "60.00",
     "violationType": "Rule 12 (Non-standard unit)",
-    "image": "https://m.media-amazon.com/images/I/61K2cI7j-XL._SX679_.jpg",
+    "image": "/products/pillsbury_atta.jpg",
     "evidenceImages": [
-      { "id": "ev1", "url": "https://m.media-amazon.com/images/I/61K2cI7j-XL._SX679_.jpg", "hash": "b2c1f900d8f434346" },
-      { "id": "ev2", "url": "https://m.media-amazon.com/images/I/61K2cI7j-XL._SX679_.jpg", "hash": "c3d4e5f6g7h8i9j0k" }
+      {
+        "id": "ev1",
+        "url": "/products/pillsbury_atta.jpg",
+        "hash": "b2c1f900d8f434346"
+      },
+      {
+        "id": "ev2",
+        "url": "/products/pillsbury_atta.jpg",
+        "hash": "c3d4e5f6g7h8i9j0k"
+      }
     ],
     "boundingBoxes": [
-      { "id": 1, "type": "Brand", "x": 15, "y": 10, "width": 70, "height": 20, "color": "green" },
-      { "id": 2, "type": "Net Quantity", "x": 15, "y": 75, "width": 50, "height": 15, "color": "red", "details": "Violation: Must use '1 kg' instead of '1000 gms'" },
-      { "id": 3, "type": "MRP", "x": 70, "y": 75, "width": 20, "height": 15, "color": "green" }
+      {
+        "id": 1,
+        "type": "Brand",
+        "x": 15,
+        "y": 10,
+        "width": 70,
+        "height": 20,
+        "color": "green"
+      },
+      {
+        "id": 2,
+        "type": "Net Quantity",
+        "x": 15,
+        "y": 75,
+        "width": 50,
+        "height": 15,
+        "color": "red",
+        "details": "Violation: Must use '1 kg' instead of '1000 gms'"
+      },
+      {
+        "id": 3,
+        "type": "MRP",
+        "x": 70,
+        "y": 75,
+        "width": 20,
+        "height": 15,
+        "color": "green"
+      }
     ],
     "checklist": {
-      "rule6_1_a": { "status": "compliant", "desc": "Manufacturer info present" },
-      "rule6_1_b": { "status": "compliant", "desc": "Net quantity present" },
-      "rule6_1_e": { "status": "compliant", "desc": "Retail sale price present" },
-      "rule12": { "status": "violation", "desc": "Net quantity given in grams — Rule 12 requires standard units (1 kg)" },
-      "rule6_10": { "status": "compliant", "desc": "N/A - Domestic product" }
+      "rule6_1_a": {
+        "status": "compliant",
+        "desc": "Manufacturer info present"
+      },
+      "rule6_1_b": {
+        "status": "compliant",
+        "desc": "Net quantity present"
+      },
+      "rule6_1_e": {
+        "status": "compliant",
+        "desc": "Retail sale price present"
+      },
+      "rule12": {
+        "status": "violation",
+        "desc": "Net quantity given in grams — Rule 12 requires standard units (1 kg)"
+      },
+      "rule6_10": {
+        "status": "compliant",
+        "desc": "N/A - Domestic product"
+      }
     }
   },
   {
@@ -68,20 +166,56 @@
     "netQuantity": "100 g",
     "mrp": "350.00",
     "violationType": "Rule 6(10) (Missing Origin)",
-    "image": "https://m.media-amazon.com/images/I/71mRk22zEwL._SX679_.jpg",
+    "image": "/products/lindt_chocolate.jpg",
     "evidenceImages": [
-      { "id": "ev1", "url": "https://m.media-amazon.com/images/I/71mRk22zEwL._SX679_.jpg", "hash": "c3d4e5f6g7h8i9j0k" }
+      {
+        "id": "ev1",
+        "url": "/products/lindt_chocolate.jpg",
+        "hash": "c3d4e5f6g7h8i9j0k"
+      }
     ],
     "boundingBoxes": [
-      { "id": 1, "type": "Brand", "x": 20, "y": 20, "width": 60, "height": 20, "color": "green" },
-      { "id": 2, "type": "Importer Info", "x": 10, "y": 60, "width": 80, "height": 30, "color": "red", "details": "Violation: Country of Origin missing on imported product" }
+      {
+        "id": 1,
+        "type": "Brand",
+        "x": 20,
+        "y": 20,
+        "width": 60,
+        "height": 20,
+        "color": "green"
+      },
+      {
+        "id": 2,
+        "type": "Importer Info",
+        "x": 10,
+        "y": 60,
+        "width": 80,
+        "height": 30,
+        "color": "red",
+        "details": "Violation: Country of Origin missing on imported product"
+      }
     ],
     "checklist": {
-      "rule6_1_a": { "status": "compliant", "desc": "Importer info present" },
-      "rule6_1_b": { "status": "compliant", "desc": "Net quantity present" },
-      "rule6_1_e": { "status": "compliant", "desc": "Retail sale price present" },
-      "rule12": { "status": "compliant", "desc": "Standard units used" },
-      "rule6_10": { "status": "violation", "desc": "Country of origin is missing on imported product." }
+      "rule6_1_a": {
+        "status": "compliant",
+        "desc": "Importer info present"
+      },
+      "rule6_1_b": {
+        "status": "compliant",
+        "desc": "Net quantity present"
+      },
+      "rule6_1_e": {
+        "status": "compliant",
+        "desc": "Retail sale price present"
+      },
+      "rule12": {
+        "status": "compliant",
+        "desc": "Standard units used"
+      },
+      "rule6_10": {
+        "status": "violation",
+        "desc": "Country of origin is missing on imported product."
+      }
     }
   },
   {
@@ -95,20 +229,57 @@
     "netQuantity": "1 L",
     "mrp": "60.00",
     "violationType": "Font Ratio Suspect",
-    "image": "https://m.media-amazon.com/images/I/51wXpMh2YvL._SX679_.jpg",
+    "image": "/products/himalayan_water.jpg",
     "evidenceImages": [
-      { "id": "ev1", "url": "https://m.media-amazon.com/images/I/51wXpMh2YvL._SX679_.jpg", "hash": "x1y2z3a4b5c6d7e8f" }
+      {
+        "id": "ev1",
+        "url": "/products/himalayan_water.jpg",
+        "hash": "x1y2z3a4b5c6d7e8f"
+      }
     ],
     "boundingBoxes": [
-      { "id": 1, "type": "Brand", "x": 30, "y": 30, "width": 40, "height": 20, "color": "green" },
-      { "id": 2, "type": "Declarations", "x": 20, "y": 70, "width": 60, "height": 20, "color": "yellow", "details": "Warning: Font ratio to principal display panel seems low", "fontRatio": "62%" }
+      {
+        "id": 1,
+        "type": "Brand",
+        "x": 30,
+        "y": 30,
+        "width": 40,
+        "height": 20,
+        "color": "green"
+      },
+      {
+        "id": 2,
+        "type": "Declarations",
+        "x": 20,
+        "y": 70,
+        "width": 60,
+        "height": 20,
+        "color": "yellow",
+        "details": "Warning: Font ratio to principal display panel seems low",
+        "fontRatio": "62%"
+      }
     ],
     "checklist": {
-      "rule6_1_a": { "status": "compliant", "desc": "Manufacturer info present" },
-      "rule6_1_b": { "status": "compliant", "desc": "Net quantity present" },
-      "rule6_1_e": { "status": "review", "desc": "62% of brand name height — below threshold for readability." },
-      "rule12": { "status": "compliant", "desc": "Standard units used" },
-      "rule6_10": { "status": "compliant", "desc": "N/A" }
+      "rule6_1_a": {
+        "status": "compliant",
+        "desc": "Manufacturer info present"
+      },
+      "rule6_1_b": {
+        "status": "compliant",
+        "desc": "Net quantity present"
+      },
+      "rule6_1_e": {
+        "status": "review",
+        "desc": "62% of brand name height — below threshold for readability."
+      },
+      "rule12": {
+        "status": "compliant",
+        "desc": "Standard units used"
+      },
+      "rule6_10": {
+        "status": "compliant",
+        "desc": "N/A"
+      }
     }
   },
   {
@@ -122,20 +293,56 @@
     "netQuantity": "1 L",
     "mrp": "150.00",
     "violationType": "Low OCR Confidence",
-    "image": "https://m.media-amazon.com/images/I/61YFkFpI6AL._SX679_.jpg",
+    "image": "/products/fortune_oil.jpg",
     "evidenceImages": [
-      { "id": "ev1", "url": "https://m.media-amazon.com/images/I/61YFkFpI6AL._SX679_.jpg", "hash": "1a2b3c4d5e6f7g8h9" }
+      {
+        "id": "ev1",
+        "url": "/products/fortune_oil.jpg",
+        "hash": "1a2b3c4d5e6f7g8h9"
+      }
     ],
     "boundingBoxes": [
-      { "id": 1, "type": "Brand", "x": 20, "y": 15, "width": 60, "height": 20, "color": "green" },
-      { "id": 2, "type": "MRP & Date", "x": 10, "y": 80, "width": 80, "height": 15, "color": "yellow", "details": "Review: Smudged text, OCR confidence below threshold" }
+      {
+        "id": 1,
+        "type": "Brand",
+        "x": 20,
+        "y": 15,
+        "width": 60,
+        "height": 20,
+        "color": "green"
+      },
+      {
+        "id": 2,
+        "type": "MRP & Date",
+        "x": 10,
+        "y": 80,
+        "width": 80,
+        "height": 15,
+        "color": "yellow",
+        "details": "Review: Smudged text, OCR confidence below threshold"
+      }
     ],
     "checklist": {
-      "rule6_1_a": { "status": "compliant", "desc": "Manufacturer info present" },
-      "rule6_1_b": { "status": "review", "desc": "Smudged text, OCR confidence below threshold." },
-      "rule6_1_e": { "status": "compliant", "desc": "MRP visible" },
-      "rule12": { "status": "compliant", "desc": "Standard units used" },
-      "rule6_10": { "status": "compliant", "desc": "N/A" }
+      "rule6_1_a": {
+        "status": "compliant",
+        "desc": "Manufacturer info present"
+      },
+      "rule6_1_b": {
+        "status": "review",
+        "desc": "Smudged text, OCR confidence below threshold."
+      },
+      "rule6_1_e": {
+        "status": "compliant",
+        "desc": "MRP visible"
+      },
+      "rule12": {
+        "status": "compliant",
+        "desc": "Standard units used"
+      },
+      "rule6_10": {
+        "status": "compliant",
+        "desc": "N/A"
+      }
     }
   },
   {
@@ -149,21 +356,64 @@
     "netQuantity": "1 kg",
     "mrp": "25.00",
     "violationType": null,
-    "image": "https://m.media-amazon.com/images/I/61K9o2c0lLL._SX679_.jpg",
+    "image": "/products/tata_salt.jpg",
     "evidenceImages": [
-      { "id": "ev1", "url": "https://m.media-amazon.com/images/I/61K9o2c0lLL._SX679_.jpg", "hash": "k8j7h6g5f4d3s2a1" }
+      {
+        "id": "ev1",
+        "url": "/products/tata_salt.jpg",
+        "hash": "k8j7h6g5f4d3s2a1"
+      }
     ],
     "boundingBoxes": [
-      { "id": 1, "type": "Brand", "x": 10, "y": 10, "width": 40, "height": 20, "color": "green" },
-      { "id": 2, "type": "Net Quantity", "x": 10, "y": 70, "width": 30, "height": 10, "color": "green" },
-      { "id": 3, "type": "MRP", "x": 60, "y": 70, "width": 30, "height": 10, "color": "green" }
+      {
+        "id": 1,
+        "type": "Brand",
+        "x": 10,
+        "y": 10,
+        "width": 40,
+        "height": 20,
+        "color": "green"
+      },
+      {
+        "id": 2,
+        "type": "Net Quantity",
+        "x": 10,
+        "y": 70,
+        "width": 30,
+        "height": 10,
+        "color": "green"
+      },
+      {
+        "id": 3,
+        "type": "MRP",
+        "x": 60,
+        "y": 70,
+        "width": 30,
+        "height": 10,
+        "color": "green"
+      }
     ],
     "checklist": {
-      "rule6_1_a": { "status": "compliant", "desc": "Manufacturer info present" },
-      "rule6_1_b": { "status": "compliant", "desc": "Net quantity present" },
-      "rule6_1_e": { "status": "compliant", "desc": "Retail sale price present" },
-      "rule12": { "status": "compliant", "desc": "Standard units used" },
-      "rule6_10": { "status": "compliant", "desc": "N/A - Domestic product" }
+      "rule6_1_a": {
+        "status": "compliant",
+        "desc": "Manufacturer info present"
+      },
+      "rule6_1_b": {
+        "status": "compliant",
+        "desc": "Net quantity present"
+      },
+      "rule6_1_e": {
+        "status": "compliant",
+        "desc": "Retail sale price present"
+      },
+      "rule12": {
+        "status": "compliant",
+        "desc": "Standard units used"
+      },
+      "rule6_10": {
+        "status": "compliant",
+        "desc": "N/A - Domestic product"
+      }
     }
   },
   {
@@ -177,20 +427,77 @@
     "netQuantity": "1 U",
     "mrp": "134900.00",
     "violationType": "MRP Format Error",
-    "image": "https://m.media-amazon.com/images/I/81+GIkwqLIL._SX679_.jpg",
+    "image": "/products/apple_iphone15.jpg",
     "evidenceImages": [
-      { "id": "ev1", "url": "https://m.media-amazon.com/images/I/81+GIkwqLIL._SX679_.jpg", "hash": "q1w2e3r4t5y6u7i8" }
+      {
+        "id": "ev1",
+        "url": "/products/apple_iphone15.jpg",
+        "hash": "q1w2e3r4t5y6u7i8"
+      }
     ],
     "boundingBoxes": [
-      { "id": 1, "type": "Brand", "x": 20, "y": 20, "width": 60, "height": 20, "color": "green" },
-      { "id": 2, "type": "MRP", "x": 60, "y": 80, "width": 20, "height": 10, "color": "red", "details": "Violation: Misleading MRP tax text" }
+      {
+        "id": 1,
+        "type": "Brand & Model",
+        "x": 37,
+        "y": 28,
+        "width": 27,
+        "height": 6,
+        "color": "green",
+        "details": "Apple iPhone 15 Pro (128GB)"
+      },
+      {
+        "id": 2,
+        "type": "Origin & BIS",
+        "x": 37,
+        "y": 51,
+        "width": 27,
+        "height": 6,
+        "color": "green",
+        "details": "Assembled in China / India BIS R-41131234"
+      },
+      {
+        "id": 3,
+        "type": "MRP (Rule 6(1)(e))",
+        "x": 37,
+        "y": 61,
+        "width": 27,
+        "height": 7,
+        "color": "red",
+        "details": "Violation: Misleading MRP tax text format"
+      },
+      {
+        "id": 4,
+        "type": "Net Quantity",
+        "x": 37,
+        "y": 66,
+        "width": 18,
+        "height": 4,
+        "color": "green",
+        "details": "Quantity: 1 Unit (Rule 12 Compliant)"
+      }
     ],
     "checklist": {
-      "rule6_1_a": { "status": "compliant", "desc": "Manufacturer info present" },
-      "rule6_1_b": { "status": "compliant", "desc": "Net quantity present" },
-      "rule6_1_e": { "status": "violation", "desc": "MRP format excludes taxes implicitly." },
-      "rule12": { "status": "compliant", "desc": "Standard units used" },
-      "rule6_10": { "status": "compliant", "desc": "Origin declared" }
+      "rule6_1_a": {
+        "status": "compliant",
+        "desc": "Manufacturer info present"
+      },
+      "rule6_1_b": {
+        "status": "compliant",
+        "desc": "Net quantity present"
+      },
+      "rule6_1_e": {
+        "status": "violation",
+        "desc": "MRP format excludes taxes implicitly."
+      },
+      "rule12": {
+        "status": "compliant",
+        "desc": "Standard units used"
+      },
+      "rule6_10": {
+        "status": "compliant",
+        "desc": "Origin declared"
+      }
     }
   },
   {
@@ -204,21 +511,159 @@
     "netQuantity": "280 g",
     "mrp": "56.00",
     "violationType": null,
-    "image": "https://m.media-amazon.com/images/I/71P4r1TDBoL._SX679_.jpg",
+    "image": "/products/maggi_noodles.jpg",
     "evidenceImages": [
-      { "id": "ev1", "url": "https://m.media-amazon.com/images/I/71P4r1TDBoL._SX679_.jpg", "hash": "o9p0l1k2j3h4g5f6" }
+      {
+        "id": "ev1",
+        "url": "/products/maggi_noodles.jpg",
+        "hash": "o9p0l1k2j3h4g5f6"
+      }
     ],
     "boundingBoxes": [
-      { "id": 1, "type": "Brand", "x": 10, "y": 10, "width": 50, "height": 20, "color": "green" },
-      { "id": 2, "type": "Net Quantity", "x": 10, "y": 70, "width": 40, "height": 10, "color": "green" },
-      { "id": 3, "type": "MRP", "x": 60, "y": 70, "width": 30, "height": 10, "color": "green" }
+      {
+        "id": 1,
+        "type": "Brand",
+        "x": 10,
+        "y": 10,
+        "width": 50,
+        "height": 20,
+        "color": "green"
+      },
+      {
+        "id": 2,
+        "type": "Net Quantity",
+        "x": 10,
+        "y": 70,
+        "width": 40,
+        "height": 10,
+        "color": "green"
+      },
+      {
+        "id": 3,
+        "type": "MRP",
+        "x": 60,
+        "y": 70,
+        "width": 30,
+        "height": 10,
+        "color": "green"
+      }
     ],
     "checklist": {
-      "rule6_1_a": { "status": "compliant", "desc": "Manufacturer info present" },
-      "rule6_1_b": { "status": "compliant", "desc": "Net quantity present" },
-      "rule6_1_e": { "status": "compliant", "desc": "Retail sale price present" },
-      "rule12": { "status": "compliant", "desc": "Standard units used" },
-      "rule6_10": { "status": "compliant", "desc": "N/A - Domestic product" }
+      "rule6_1_a": {
+        "status": "compliant",
+        "desc": "Manufacturer info present"
+      },
+      "rule6_1_b": {
+        "status": "compliant",
+        "desc": "Net quantity present"
+      },
+      "rule6_1_e": {
+        "status": "compliant",
+        "desc": "Retail sale price present"
+      },
+      "rule12": {
+        "status": "compliant",
+        "desc": "Standard units used"
+      },
+      "rule6_10": {
+        "status": "compliant",
+        "desc": "N/A - Domestic product"
+      }
+    }
+  },
+  {
+    "id": "SKU-109",
+    "productName": "Nestlé KitKat Coated Wafer (38.5g)",
+    "brand": "Nestlé",
+    "category": "Food & Grocery",
+    "marketplace": "Physical Retail / Live Field Scan",
+    "timestamp": "2024-10-12T16:00:00Z",
+    "status": "Likely Compliant",
+    "netQuantity": "38.5 g",
+    "mrp": "30.00",
+    "violationType": null,
+    "image": "/products/nestle_kitkat.jpg",
+    "evidenceImages": [
+      {
+        "id": "ev1",
+        "url": "/products/nestle_kitkat.jpg",
+        "hash": "c8f2a1b94e3d7065a"
+      }
+    ],
+    "boundingBoxes": [
+      {
+        "id": 1,
+        "type": "Brand & Trademark (Rule 6(1)(a))",
+        "x": 28,
+        "y": 33,
+        "width": 38,
+        "height": 32,
+        "color": "green",
+        "details": "Nestlé KitKat® Registered Trademark & Brand Identity"
+      },
+      {
+        "id": 2,
+        "type": "Net Quantity (Rule 6(1)(b))",
+        "x": 65,
+        "y": 48,
+        "width": 12,
+        "height": 9,
+        "color": "green",
+        "details": "Declared: 38.5 g (Rule 6(1)(b) Compliant - standard metric SI unit 'g')",
+        "fontRatio": "100%"
+      },
+      {
+        "id": 3,
+        "type": "Product Descriptor & Classification",
+        "x": 64,
+        "y": 28,
+        "width": 13,
+        "height": 14,
+        "color": "green",
+        "details": "Classic Wafer Bar — 4 Crisp Wafer Fingers in Milk Chocolate"
+      },
+      {
+        "id": 4,
+        "type": "Caloric & Nutritional Information",
+        "x": 74,
+        "y": 41,
+        "width": 6,
+        "height": 9,
+        "color": "green",
+        "details": "Per portion energy: 198 kcal (9.9% GDA contribution)"
+      },
+      {
+        "id": 5,
+        "type": "Retail Sale Price & USP (Rule 6(1)(e))",
+        "x": 33,
+        "y": 55,
+        "width": 42,
+        "height": 18,
+        "color": "green",
+        "details": "MRP ₹ 30.00 (incl. of all taxes) & Unit Sale Price: Rs. 0.78 per g"
+      }
+    ],
+    "checklist": {
+      "rule6_1_a": {
+        "status": "compliant",
+        "desc": "Manufacturer info present: Nestlé India Ltd, New Delhi & Usgao Goa factory declared"
+      },
+      "rule6_1_b": {
+        "status": "compliant",
+        "desc": "Net quantity declared prominently: 38.5 g (Standard SI unit)"
+      },
+      "rule6_1_e": {
+        "status": "compliant",
+        "desc": "Retail sale price format: MRP ₹30.00 (incl. of all taxes) with Unit Sale Price (Rs. 0.78 per g)"
+      },
+      "rule12": {
+        "status": "compliant",
+        "desc": "Metric symbol 'g' used correctly in accordance with Seventh Schedule"
+      },
+      "rule6_10": {
+        "status": "compliant",
+        "desc": "Domestic Indian product (Manufactured in Goa, India)"
+      }
     }
   }
 ]

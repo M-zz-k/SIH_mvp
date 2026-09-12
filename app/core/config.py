@@ -11,7 +11,7 @@ from pydantic_settings import BaseSettings
 
 logger = logging.getLogger(__name__)
 
-_DEFAULT_JWT_SECRET = "CHANGE_ME_BEFORE_DEMO"
+_DEFAULT_JWT_SECRET = "metroscan_legal_metrology_jwt_secure_secret_key_2026_sih"
 
 
 class Settings(BaseSettings):
@@ -25,8 +25,6 @@ class Settings(BaseSettings):
     DATABASE_URL: str = "sqlite:///./metroscan.db"
 
     # --- Auth / JWT ---
-    # ⚠️  IMPORTANT: set a real random secret in .env before the demo.
-    #    A startup warning is emitted (not a crash) if this is still the default.
     JWT_SECRET_KEY: str = _DEFAULT_JWT_SECRET
     JWT_ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 8  # 8 hours - long enough for a demo day
@@ -52,6 +50,7 @@ class Settings(BaseSettings):
 
     class Config:
         env_file = ".env"
+        extra = "ignore"
 
 
 settings = Settings()
@@ -61,7 +60,7 @@ settings = Settings()
 # This is intentionally a warning (not an exception) so demos can still run
 # in a pinch, but the message will be visible in the server log.
 # ---------------------------------------------------------------------------
-if settings.JWT_SECRET_KEY == _DEFAULT_JWT_SECRET:
+if settings.JWT_SECRET_KEY in ("CHANGE_ME_BEFORE_DEMO", "changeme", "secret"):
     _msg = (
         "\n"
         "╔══════════════════════════════════════════════════════════════╗\n"

@@ -2,33 +2,47 @@ import React, { useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { 
   LayoutDashboard, Layers, FolderOpen, ScanLine, 
-  Scale, BarChart3, BookOpen, Settings, 
+  Scale, BarChart3, BookOpen, Settings, Globe,
   Search, Bell, UserCircle, ChevronRight, Menu, X, LogOut
 } from 'lucide-react';
 
-const NAV_ITEMS = [
-  { to: '/dashboard', label: 'Dashboard', icon: <LayoutDashboard className="w-5 h-5" /> },
-  { to: '/bulk-upload', label: 'Bulk Ingestion', icon: <Layers className="w-5 h-5" /> },
-  { to: '/repository', label: 'Field Dossiers', icon: <FolderOpen className="w-5 h-5" /> },
-  { to: '/scan', label: 'Single Scan', icon: <ScanLine className="w-5 h-5" /> },
-  { to: '/analytics', label: 'Regional Analytics', icon: <BarChart3 className="w-5 h-5" /> },
+const ALL_NAV_ITEMS = [
+  { to: '/dashboard', label: 'Dashboard', icon: <LayoutDashboard className="w-5 h-5" />, roles: ['inspector', 'supervisor', 'admin'] },
+  { to: '/scan', label: 'Single Scan', icon: <ScanLine className="w-5 h-5" />, roles: ['inspector', 'admin'] },
+  { to: '/bulk-upload', label: 'Bulk Ingestion', icon: <Layers className="w-5 h-5" />, roles: ['supervisor', 'admin'] },
+  { to: '/ecommerce-audit', label: 'E-Commerce Audit', icon: <Globe className="w-5 h-5" />, roles: ['supervisor', 'admin'] },
+  { to: '/repository', label: 'Field Dossiers', icon: <FolderOpen className="w-5 h-5" />, roles: ['inspector', 'supervisor', 'admin'] },
+  { to: '/analytics', label: 'Regional Analytics', icon: <BarChart3 className="w-5 h-5" />, roles: ['supervisor', 'admin'] },
 ];
 
 const SETTINGS_ITEMS = [
-  { to: '/legal', label: 'Legal Decisions', icon: <Scale className="w-5 h-5" /> },
-  { to: '/statutory', label: 'Statutory Rules', icon: <BookOpen className="w-5 h-5" /> },
-  { to: '/settings', label: 'Settings', icon: <Settings className="w-5 h-5" /> },
+  { to: '/legal', label: 'Legal Decisions', icon: <Scale className="w-5 h-5" />, roles: ['inspector', 'supervisor', 'admin'] },
+  { to: '/statutory', label: 'Statutory Rules', icon: <BookOpen className="w-5 h-5" />, roles: ['inspector', 'supervisor', 'admin'] },
+  { to: '/settings', label: 'Settings', icon: <Settings className="w-5 h-5" />, roles: ['admin', 'supervisor', 'inspector'] },
 ];
 
 export function AppLayout({ children, userRole }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
-  const currentNav = [...NAV_ITEMS, ...SETTINGS_ITEMS].find(n => n.to === location.pathname) || { label: 'Detail View' };
+
+  const currentRole = userRole || 'inspector';
+  const navItems = ALL_NAV_ITEMS.filter(item => item.roles.includes(currentRole));
+  const settingsItems = SETTINGS_ITEMS.filter(item => item.roles.includes(currentRole));
+  
+  const currentNav = [...ALL_NAV_ITEMS, ...SETTINGS_ITEMS].find(n => n.to === location.pathname) || { label: 'Detail View' };
 
   const handleLogout = () => {
+    localStorage.removeItem('access_token');
     localStorage.removeItem('userRole');
+    localStorage.removeItem('userEmail');
     window.location.href = '/login';
   };
+
+  const handleSwitchRole = (newRole) => {
+    localStorage.setItem('userRole', newRole);
+    window.location.reload();
+  };
+
 
   return (
     <div className="min-h-screen flex w-full bg-[var(--color-canvas-outer)] text-text-secondary p-4 md:p-6 gap-6">
@@ -55,7 +69,7 @@ export function AppLayout({ children, userRole }) {
         
         {/* Navigation items - Circular icon pins */}
         <nav className="flex-1 py-8 overflow-y-auto flex flex-col gap-2 px-3">
-          {NAV_ITEMS.map((item) => (
+          {navItems.map((item) => (
             <NavLink
               key={item.label}
               to={item.to}
@@ -76,7 +90,7 @@ export function AppLayout({ children, userRole }) {
 
         {/* Pinned Bottom Navigation */}
         <div className="p-3 border-t border-white/10 flex flex-col gap-1 mb-2">
-           {SETTINGS_ITEMS.map((item) => (
+           {settingsItems.map((item) => (
             <NavLink
               key={item.label}
               to={item.to}
@@ -91,7 +105,7 @@ export function AppLayout({ children, userRole }) {
               <span className="hidden lg:block">{item.label}</span>
             </NavLink>
           ))}
-          <button onClick={handleLogout} className="flex items-center gap-4 px-3 py-2.5 rounded-xl text-[14px] font-bold text-white hover:text-status-err-text hover:bg-white/10 transition-all hover:translate-x-1 duration-200 mt-2">
+          <button onClick={handleLogout} className="flex items-center gap-4 px-3 py-2.5 rounded-xl text-[14px] font-bold text-white hover:text-status-err-text hover:bg-white/10 transition-all hover:translate-x-1 duration-200 mt-2 cursor-pointer">
             <div className="p-1.5 shrink-0"><LogOut className="w-5 h-5" /></div>
             <span className="hidden lg:block">Log Out</span>
           </button>
@@ -116,19 +130,31 @@ export function AppLayout({ children, userRole }) {
             </div>
           </div>
 
-          <div className="flex items-center gap-4 shrink-0">
-            <div className="relative hidden md:block">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Search className="w-4 h-4 text-text-muted" />
-              </div>
-              <input
-                type="text"
-                placeholder="Search dossiers..."
-                className="w-64 pl-10 pr-4 py-2 bg-card border-0 shadow-sm rounded-full text-[13px] font-medium focus:outline-none focus:ring-2 focus:ring-primary transition-shadow"
-              />
+          <div className="flex items-center gap-3 shrink-0">
+            {/* Quick Role Switcher Pill */}
+            <div className="flex items-center gap-1.5 bg-card border border-border-subtle p-1 rounded-xl shadow-sm text-xs font-bold">
+              <span className="text-[10px] text-text-muted uppercase tracking-wider px-2 hidden lg:inline">Role:</span>
+              <button 
+                onClick={() => handleSwitchRole('inspector')} 
+                className={`px-2.5 py-1 rounded-lg transition-colors cursor-pointer text-xs ${currentRole === 'inspector' ? 'bg-primary text-white' : 'text-text-secondary hover:bg-canvas'}`}
+              >
+                Inspector
+              </button>
+              <button 
+                onClick={() => handleSwitchRole('supervisor')} 
+                className={`px-2.5 py-1 rounded-lg transition-colors cursor-pointer text-xs ${currentRole === 'supervisor' ? 'bg-primary text-white' : 'text-text-secondary hover:bg-canvas'}`}
+              >
+                Supervisor
+              </button>
+              <button 
+                onClick={() => handleSwitchRole('admin')} 
+                className={`px-2.5 py-1 rounded-lg transition-colors cursor-pointer text-xs ${currentRole === 'admin' ? 'bg-primary text-white' : 'text-text-secondary hover:bg-canvas'}`}
+              >
+                Admin
+              </button>
             </div>
-            
-            <button className="text-text-muted hover:text-text-secondary relative p-2 bg-card rounded-full shadow-sm">
+
+            <button className="text-text-muted hover:text-text-secondary relative p-2 bg-card rounded-full shadow-sm cursor-pointer">
               <Bell className="w-5 h-5" />
               <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-status-err-text rounded-full border-2 border-card"></span>
             </button>
@@ -152,8 +178,8 @@ export function AppLayout({ children, userRole }) {
                      <UserCircle className="w-6 h-6 text-white" />
                    </div>
                    <div>
-                      <div className="text-sm font-bold tracking-wide">
-                        {userRole === 'supervisor' ? 'K. Sharma' : 'Field Officer'}
+                      <div className="text-sm font-bold tracking-wide capitalize">
+                        {currentRole}
                       </div>
                    </div>
                 </div>
@@ -161,7 +187,7 @@ export function AppLayout({ children, userRole }) {
              </div>
              
              <nav className="flex-1 py-8 overflow-y-auto flex flex-col gap-2 px-3">
-              {NAV_ITEMS.map((item) => (
+              {navItems.map((item) => (
                 <NavLink
                   key={item.label}
                   to={item.to}
@@ -179,7 +205,7 @@ export function AppLayout({ children, userRole }) {
                   <span>{item.label}</span>
                 </NavLink>
               ))}
-            </nav>
+             </nav>
           </aside>
         </div>
       )}

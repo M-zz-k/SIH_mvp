@@ -33,20 +33,26 @@ def seed_admin():
 
     db = SessionLocal()
     try:
-        user = db.query(User).filter(User.email == settings.ADMIN_EMAIL).first()
-        if user is None:
-            # First run — create the admin account from scratch.
-            db.add(User(
-                email=settings.ADMIN_EMAIL,
-                hashed_password=hash_password(settings.ADMIN_PASSWORD),
-                role=UserRoleDB.admin,
-            ))
-            db.commit()
-        elif user.role != UserRoleDB.admin:
-            # Account exists but was somehow demoted — re-promote it.
-            user.role = UserRoleDB.admin
-            db.commit()
-        # If already admin, nothing to do.
+        # Default accounts to seed for demonstration & evaluation
+        default_accounts = [
+            (settings.ADMIN_EMAIL, settings.ADMIN_PASSWORD, UserRoleDB.admin),
+            ("inspector@doca.gov.in", "doca2026", UserRoleDB.inspector),
+            ("supervisor@doca.gov.in", "doca2026", UserRoleDB.supervisor),
+            ("admin@doca.gov.in", "doca2026", UserRoleDB.admin),
+        ]
+
+        for email, password, role in default_accounts:
+            user = db.query(User).filter(User.email == email).first()
+            if user is None:
+                db.add(User(
+                    email=email,
+                    hashed_password=hash_password(password),
+                    role=role,
+                ))
+                db.commit()
+            elif role == UserRoleDB.admin and user.role != UserRoleDB.admin:
+                user.role = UserRoleDB.admin
+                db.commit()
     finally:
         db.close()
 

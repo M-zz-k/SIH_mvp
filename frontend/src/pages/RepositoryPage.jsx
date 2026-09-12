@@ -1,26 +1,52 @@
 import React, { useEffect, useState } from 'react';
-import { Search, Filter, Download } from 'lucide-react';
-import { fetchInspections } from '../services/api';
-import { useNavigate } from 'react-router-dom';
+import { Search, Filter, Download, Trash2 } from 'lucide-react';
+import { fetchInspections, clearAllTestScans } from '../services/api';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { GridContainer, Card, CardHeader, CardBody, StatusChip } from '../components/Primitives';
 
 function RepositoryPage() {
   const [data, setData] = useState([]);
-  const [search, setSearch] = useState('');
-  const [filterStatus, setFilterStatus] = useState('All');
+  const [searchParams] = useSearchParams();
+  const [search, setSearch] = useState(searchParams.get('search') || '');
+  const [filterStatus, setFilterStatus] = useState(searchParams.get('status') || 'All');
   const navigate = useNavigate();
 
   useEffect(() => {
     fetchInspections().then((res) => setData(res));
   }, []);
 
-  const filteredData = data.filter(item => {
-    const matchesSearch = item.productName.toLowerCase().includes(search.toLowerCase()) || 
-                          item.id.toLowerCase().includes(search.toLowerCase()) ||
-                          item.brand.toLowerCase().includes(search.toLowerCase());
-    const matchesStatus = filterStatus === 'All' || item.status === filterStatus;
-    return matchesSearch && matchesStatus;
-  });
+  const handleClearTestScans = async () => {
+    const cleared = await clearAllTestScans();
+    setData(cleared || []);
+  };
+
+  useEffect(() => {
+    const qSearch = searchParams.get('search');
+    const qStatus = searchParams.get('status');
+    if (qSearch !== null) setSearch(qSearch);
+    if (qStatus !== null) setFilterStatus(qStatus);
+  }, [searchParams]);
+
+  const filteredData = React.useMemo(() => {
+    const seen = new Set();
+    return data.filter(item => {
+      const matchesSearch = item.productName.toLowerCase().includes(search.toLowerCase()) || 
+                            item.id.toLowerCase().includes(search.toLowerCase()) ||
+                            item.brand.toLowerCase().includes(search.toLowerCase()) ||
+                            (item.violationType && item.violationType.toLowerCase().includes(search.toLowerCase()));
+      const matchesStatus = filterStatus === 'All' || item.status === filterStatus;
+      
+      if (!matchesSearch || !matchesStatus) return false;
+
+      // Deduplicate: show only 1 latest card per unique product, and ensure unique keys
+      const key = `${item.brand}_${item.productName}`.toLowerCase();
+      if (seen.has(key) || seen.has(item.id)) return false;
+      seen.add(key);
+      seen.add(item.id);
+      return true;
+    });
+  }, [data, search, filterStatus]);
+
 
   const handleExportCSV = () => {
     if (!filteredData || filteredData.length === 0) return;
@@ -53,12 +79,24 @@ function RepositoryPage() {
       
       <div className="flex items-end justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-text-primary tracking-tight">Repository (Req 7 & 10)</h1>
+          <h1 className="text-2xl font-bold text-text-primary tracking-tight">Field Dossiers (Req 7 & 10)</h1>
           <p className="text-[11px] text-text-muted mt-1 uppercase tracking-widest font-bold">Searchable Dossier Archive</p>
         </div>
-        <button onClick={handleExportCSV} className="px-4 py-2 bg-secondary text-white text-sm font-bold rounded-xl hover:bg-secondary-dark transition-colors shadow-sm flex items-center justify-center gap-2">
-           <Download className="w-4 h-4" /> Export CSV
-        </button>
+        <div className="flex items-center gap-3">
+          <button 
+            onClick={handleClearTestScans} 
+            title="Remove temporary test scans and reset repository to clean standard state"
+            className="px-3.5 py-2 bg-canvas border border-border-subtle text-text-secondary text-sm font-bold rounded-xl hover:text-rose-500 hover:border-rose-500/50 transition-colors shadow-xs flex items-center justify-center gap-1.5 cursor-pointer"
+          >
+            <Trash2 className="w-4 h-4 text-rose-500" /> Clear Test Scans
+          </button>
+          <button 
+            onClick={handleExportCSV} 
+            className="px-4 py-2 bg-secondary text-white text-sm font-bold rounded-xl hover:bg-secondary-dark transition-colors shadow-sm flex items-center justify-center gap-2 cursor-pointer"
+          >
+            <Download className="w-4 h-4" /> Export CSV
+          </button>
+        </div>
       </div>
 
       <Card>

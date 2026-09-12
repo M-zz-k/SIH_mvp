@@ -11,6 +11,10 @@ import RepositoryPage from './pages/RepositoryPage';
 import AnalyticsPage from './pages/AnalyticsPage';
 import SettingsPage from './pages/SettingsPage';
 
+import LegalDecisionsPage from './pages/LegalDecisionsPage';
+import StatutoryRulesPage from './pages/StatutoryRulesPage';
+import ECommerceAuditPage from './pages/ECommerceAuditPage';
+
 function App() {
   const [userRole, setUserRole] = useState(localStorage.getItem('userRole'));
   const location = useLocation();
@@ -36,15 +40,20 @@ function App() {
     <AppLayout userRole={userRole}>
       <Routes>
         <Route path="/dashboard" element={<DashboardPage />} />
-        <Route path="/bulk-upload" element={<BulkUploadPage />} />
         <Route path="/scan" element={<ScanPage />} />
+        <Route path="/bulk-upload" element={
+          userRole === 'inspector' ? <Navigate to="/dashboard" replace /> : <BulkUploadPage />
+        } />
+        <Route path="/ecommerce-audit" element={
+          userRole === 'inspector' ? <Navigate to="/dashboard" replace /> : <ECommerceAuditPage />
+        } />
         <Route path="/inspection/:id" element={<InspectionPage />} />
         <Route path="/repository" element={<RepositoryPage />} />
         <Route path="/analytics" element={<AnalyticsPage />} />
         
-        {/* Unimplemented / Stub routes */}
-        <Route path="/legal" element={<div className="p-10 text-center font-bold text-slate-500 text-sm tracking-widest uppercase">Legal Decisions Vault (Pending API)</div>} />
-        <Route path="/statutory" element={<div className="p-10 text-center font-bold text-slate-500 text-sm tracking-widest uppercase">Statutory Rules Configurator (Pending API)</div>} />
+        {/* Statutory & Legal Vault routes */}
+        <Route path="/legal" element={<LegalDecisionsPage />} />
+        <Route path="/statutory" element={<StatutoryRulesPage />} />
         <Route path="/settings" element={<SettingsPage />} />
         
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
@@ -52,5 +61,6 @@ function App() {
     </AppLayout>
   );
 }
+
 
 export default App;

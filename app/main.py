@@ -3,7 +3,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api.routes import auth, bulk, dashboard, results, scan
+from app.api.routes import auth, bulk, dashboard, results, scan, scraper
 from app.core.config import settings
 from app.db.session import init_db, seed_admin
 
@@ -48,3 +48,4 @@ app.include_router(scan.router)
 app.include_router(bulk.router)
 app.include_router(results.router)
 app.include_router(dashboard.router)
+app.include_router(scraper.router)

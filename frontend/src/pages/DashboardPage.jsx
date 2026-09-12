@@ -1,8 +1,12 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { fetchInspections } from '../services/api';
+import { fetchInspections, updateInspectionStatus } from '../services/api';
+import { generatePdfMemo, generateDocxNotice } from '../utils/exportNotice';
 import { GridContainer, Card, CardHeader, CardBody, ListRow, StatValue } from '../components/Primitives';
 import { useNavigate } from 'react-router-dom';
-import { ShieldAlert, Activity, ArrowRight, Loader, Pause, Play, Clock, Search, AlertTriangle } from 'lucide-react';
+import { 
+  ShieldAlert, Activity, ArrowRight, Loader, Pause, Play, 
+  Clock, Search, AlertTriangle, Download, CheckCircle, XCircle 
+} from 'lucide-react';
 
 function DashboardPage() {
   const navigate = useNavigate();
@@ -10,6 +14,14 @@ function DashboardPage() {
   const [isLive, setIsLive] = useState(true);
   const [time, setTime] = useState(new Date());
   const [processedCount, setProcessedCount] = useState(37);
+  const [noticeTarget, setNoticeTarget] = useState(null);
+  const [noticeSuccess, setNoticeSuccess] = useState(false);
+  
+  const userRole = localStorage.getItem('userRole') || 'inspector';
+  const defaultOfficer = userRole === 'supervisor' ? 'K. Sharma (HQ Supervisor)' :
+    userRole === 'admin' ? 'Central Admin (DoCA)' : 'V. Kumar (Field Officer)';
+  const [officerName, setOfficerName] = useState(defaultOfficer);
+
   const [feedItems, setFeedItems] = useState([
     { id: 1, time: new Date(Date.now() - 1000 * 45), text: 'SKU-IN-104 (Blinkit) - Flagged: Rule 12 Non-Standard Unit (\'mltr\')', type: 'violation' },
     { id: 2, time: new Date(Date.now() - 1000 * 120), text: 'SKU-IN-103 (Zepto) - Auto-Cleared: Fully Compliant', type: 'compliant' },
@@ -86,12 +98,103 @@ function DashboardPage() {
       .slice(0, 4);
   }, [data]);
 
-  // 6. High Priority Alert Calculation
-  const urgentItem = data.find(d => d.status === 'Likely Violation' || d.status === 'Needs Officer Review');
+  // 5. Priority Action Queue (Ensuring Apple SKU-107 and other flagged entities are highlighted)
+  const priorityEntities = useMemo(() => {
+    return data
+      .filter(d => d.status === 'Likely Violation' || d.status === 'Needs Officer Review' || (d.status && d.status.includes('Issued')))
+      .sort((a, b) => (a.brand === 'Apple' ? -1 : b.brand === 'Apple' ? 1 : 0))
+      .slice(0, 3);
+  }, [data]);
+
+  const handleSignNotice = async () => {
+    if (!noticeTarget) return;
+    const updated = await updateInspectionStatus(noticeTarget.id, 'Notice Issued - Action Pending', true);
+    if (updated) {
+      setData(prev => prev.map(item => item.id === noticeTarget.id ? updated : item));
+    } else {
+      setData(prev => prev.map(item => item.id === noticeTarget.id ? { ...item, status: 'Notice Issued - Action Pending', noticeIssued: true } : item));
+    }
+    setNoticeSuccess(true);
+    setTimeout(() => {
+      setNoticeTarget(null);
+      setNoticeSuccess(false);
+    }, 1500);
+  };
 
   return (
     <div className="flex flex-col gap-6">
       
+      {/* Notice Confirmation Modal */}
+      {noticeTarget && (
+        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-xs">
+          <div className="bg-card border border-border-strong rounded-2xl max-w-lg w-full p-6 shadow-2xl animate-in zoom-in-95">
+            {!noticeSuccess ? (
+              <>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="p-2.5 bg-primary-light/10 text-primary rounded-xl">
+                    <ShieldAlert className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-text-primary">Sign & Issue Statutory Notice</h3>
+                    <p className="text-xs text-text-muted">Legal Metrology (Packaged Commodities) Rules, 2011</p>
+                  </div>
+                </div>
+
+                <div className="bg-canvas border border-border-subtle p-4 rounded-xl mb-4 text-xs space-y-2">
+                  <div className="flex justify-between">
+                    <span className="text-text-muted font-bold">Docket ID:</span>
+                    <span className="font-mono font-bold text-text-primary">{noticeTarget.id}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-text-muted font-bold">Target Entity:</span>
+                    <span className="font-bold text-text-primary">{noticeTarget.brand} ({noticeTarget.productName})</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-text-muted font-bold">Alleged Violation:</span>
+                    <span className="font-bold text-status-err-text">{noticeTarget.violationType || 'Rule 12 Standard Unit Non-compliance'}</span>
+                  </div>
+                </div>
+
+                <div className="mb-4">
+                  <label className="block text-xs font-bold text-text-muted uppercase tracking-widest mb-1.5">
+                    Signing Authority / Officer
+                  </label>
+                  <input
+                    type="text"
+                    value={officerName}
+                    onChange={(e) => setOfficerName(e.target.value)}
+                    className="w-full bg-canvas border border-border-subtle rounded-xl px-4 py-2 text-sm font-bold text-text-primary focus:outline-none focus:border-primary"
+                  />
+                </div>
+
+                <div className="flex gap-3 justify-end">
+                  <button
+                    onClick={() => setNoticeTarget(null)}
+                    className="px-4 py-2 bg-canvas border border-border-subtle text-text-secondary text-sm font-bold rounded-xl hover:bg-border-subtle transition-colors cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleSignNotice}
+                    className="px-5 py-2 bg-primary text-white text-sm font-bold rounded-xl hover:bg-primary-dark transition-colors shadow-sm cursor-pointer"
+                  >
+                    Authorize & Issue Notice
+                  </button>
+                </div>
+              </>
+            ) : (
+              <div className="text-center py-6">
+                <CheckCircle className="w-12 h-12 text-status-ok-text mx-auto mb-3" />
+                <h3 className="text-lg font-bold text-text-primary">Statutory Notice Issued!</h3>
+                <p className="text-xs text-text-muted mt-1">
+                  Official notice registered and logged in enforcement repository.
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
       <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-text-primary tracking-tight">Dashboard</h1>
@@ -130,7 +233,10 @@ function DashboardPage() {
       <GridContainer>
         
         {/* 1. KPI Row */}
-        <Card className="col-span-1 md:col-span-2 lg:col-span-3">
+        <Card 
+          className="col-span-1 md:col-span-2 lg:col-span-3 cursor-pointer hover:border-primary transition-all"
+          onClick={() => navigate('/repository')}
+        >
           <CardBody className="flex flex-col items-center justify-center text-center">
              <div className="text-[11px] font-bold text-text-muted uppercase tracking-widest mb-3">Overall Compliance</div>
              <div className="relative w-24 h-24 mb-2">
@@ -143,29 +249,155 @@ function DashboardPage() {
                </div>
              </div>
              <div className="text-[10px] text-text-primary font-bold flex items-center justify-center gap-1 mt-2">
-               {totalScans} SKUs Scanned
+               {totalScans} SKUs Scanned • Click to View All
              </div>
           </CardBody>
         </Card>
 
-        <Card className="col-span-1 md:col-span-2 lg:col-span-3">
+        <Card 
+          className="col-span-1 md:col-span-2 lg:col-span-3 cursor-pointer hover:border-status-review-border transition-all"
+          onClick={() => navigate('/repository?status=Needs+Officer+Review')}
+        >
           <CardBody className="flex flex-col justify-center">
             <StatValue label="Needs Review" value={needsReviewCount} />
-            <div className="text-[10px] text-text-muted font-bold mt-4">Awaiting officer sign-off</div>
+            <div className="text-[10px] text-text-muted font-bold mt-4">Awaiting officer sign-off • Click to Filter</div>
           </CardBody>
         </Card>
 
-        <Card className="col-span-1 md:col-span-2 lg:col-span-3">
+        <Card 
+          className="col-span-1 md:col-span-2 lg:col-span-3 cursor-pointer hover:border-status-err-border transition-all"
+          onClick={() => navigate('/repository?status=Likely+Violation')}
+        >
           <CardBody className="flex flex-col justify-center">
             <StatValue label="Violations (This Wk)" value={violationsCount} trend="+2%" trendDir="up" />
-            <div className="text-[10px] text-text-muted font-bold mt-4">Vs. last week baseline</div>
+            <div className="text-[10px] text-text-muted font-bold mt-4">Vs. last week baseline • Click to Review</div>
           </CardBody>
         </Card>
 
-        <Card className="col-span-1 md:col-span-2 lg:col-span-3">
+        <Card 
+          className="col-span-1 md:col-span-2 lg:col-span-3 cursor-pointer hover:border-primary transition-all"
+          onClick={() => navigate('/bulk-upload')}
+        >
           <CardBody className="flex flex-col justify-center">
             <StatValue label="Active Ingestion Jobs" value={1} trend="Live" trendDir="up" />
-            <div className="text-[10px] text-text-muted font-bold mt-4">E-commerce crawler active</div>
+            <div className="text-[10px] text-text-muted font-bold mt-4">E-commerce crawler active • Click to Ingest</div>
+          </CardBody>
+        </Card>
+
+        {/* Priority Enforcement Actions (Flagged Targets like Apple) */}
+        <Card className="col-span-1 md:col-span-2 lg:col-span-12 border-primary/40 shadow-sm bg-card">
+          <CardHeader 
+            actions={
+              <button 
+                onClick={() => navigate('/repository?status=Likely+Violation')} 
+                className="text-xs font-bold text-primary hover:underline flex items-center gap-1 cursor-pointer"
+              >
+                View Repository Violations <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+            }
+          >
+            <div className="flex items-center gap-2">
+              <ShieldAlert className="w-4 h-4 text-primary" />
+              <span>Priority Enforcement Actions (Flagged Entities)</span>
+            </div>
+          </CardHeader>
+          <CardBody className="flex flex-col gap-3">
+            <p className="text-xs text-text-secondary -mt-1 mb-1">
+              Statutory action required on high-severity non-compliant listings. Inspect dossier, download official PDF Memo / DOCX Notice, or authorize show-cause notice.
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {priorityEntities.map((item) => (
+                <div 
+                  key={item.id} 
+                  className="p-4 bg-canvas border border-border-subtle rounded-2xl flex flex-col justify-between hover:border-primary transition-all shadow-xs group"
+                >
+                  <div>
+                    <div className="flex items-start justify-between gap-2 mb-3">
+                      <div className="flex items-center gap-2">
+                        <span className="font-mono text-[10px] font-bold text-text-muted bg-card px-2 py-0.5 rounded border border-border-subtle">
+                          {item.id}
+                        </span>
+                        <span className="text-[10px] font-bold text-text-muted uppercase">
+                          {item.marketplace || 'Direct'}
+                        </span>
+                      </div>
+                      <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider ${
+                        item.status.includes('Issued') ? 'bg-emerald-100 text-emerald-800 border border-emerald-300' :
+                        item.status.includes('Violation') ? 'bg-rose-100 text-rose-800 border border-rose-300' : 'bg-amber-100 text-amber-800 border border-amber-300'
+                      }`}>
+                        {item.status.includes('Issued') ? 'Notice Issued' : item.status.includes('Violation') ? 'Violation' : 'Review'}
+                      </span>
+                    </div>
+
+                    <div 
+                      onClick={() => navigate(`/inspection/${item.id}`)}
+                      className="flex items-center gap-3 mb-3 cursor-pointer"
+                    >
+                      <div className="w-12 h-12 rounded-xl bg-card border border-border-subtle flex items-center justify-center overflow-hidden p-1 shrink-0">
+                        <img 
+                          src={item.image || (item.evidenceImages && item.evidenceImages[0]?.url)} 
+                          alt={item.productName}
+                          onError={(e) => e.target.src = "https://placehold.co/100x100/E9EEF4/1B2B44?text=Product"}
+                          className="max-w-full max-h-full object-contain group-hover:scale-105 transition-transform"
+                        />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <h4 className="font-bold text-sm text-text-primary group-hover:text-primary transition-colors truncate">
+                          {item.brand}
+                        </h4>
+                        <p className="text-xs text-text-secondary truncate">
+                          {item.productName}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="bg-card border border-border-subtle p-2.5 rounded-xl mb-4">
+                      <div className="text-[10px] font-bold text-text-muted uppercase tracking-wider mb-0.5">Alleged Breach:</div>
+                      <div className="text-xs font-bold text-status-err-text truncate">
+                        {item.violationType || 'Rule 12 Standard Unit / Rule 6(1)(e) Violation'}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex flex-col gap-2 pt-2 border-t border-border-subtle">
+                    <div className="flex gap-2">
+                      <button 
+                        onClick={() => generatePdfMemo(item, officerName)}
+                        title={`Download official PDF memo for ${item.brand}`}
+                        className="flex-1 py-1.5 px-2 bg-secondary text-white text-[11px] font-bold rounded-lg hover:bg-secondary-dark transition-colors flex items-center justify-center gap-1 cursor-pointer"
+                      >
+                        <Download className="w-3 h-3" /> PDF Memo
+                      </button>
+                      <button 
+                        onClick={() => generateDocxNotice(item, officerName)}
+                        title={`Download DOCX notice for ${item.brand}`}
+                        className="flex-1 py-1.5 px-2 bg-secondary text-white text-[11px] font-bold rounded-lg hover:bg-secondary-dark transition-colors flex items-center justify-center gap-1 cursor-pointer"
+                      >
+                        <Download className="w-3 h-3" /> DOCX
+                      </button>
+                    </div>
+
+                    <div className="flex gap-2">
+                      <button 
+                        onClick={() => setNoticeTarget(item)}
+                        title="Sign and issue legal show-cause notice"
+                        className="flex-1 py-1.5 px-2 bg-primary text-white text-[11px] font-bold rounded-lg hover:bg-primary-dark transition-colors flex items-center justify-center gap-1 cursor-pointer"
+                      >
+                        <ShieldAlert className="w-3 h-3" /> Sign & Issue Notice
+                      </button>
+                      <button 
+                        onClick={() => navigate(`/inspection/${item.id}`)}
+                        title="Open complete inspection dossier"
+                        className="py-1.5 px-2.5 bg-card border border-border-subtle hover:border-primary text-text-secondary text-[11px] font-bold rounded-lg transition-colors flex items-center justify-center cursor-pointer"
+                      >
+                        Inspect <ArrowRight className="w-3 h-3 ml-0.5" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </CardBody>
         </Card>
 
@@ -229,7 +461,11 @@ function DashboardPage() {
             <CardHeader>Top Violations (This Period)</CardHeader>
             <CardBody className="flex flex-col gap-3">
               {topViolations.map((v, i) => (
-                <div key={i} className="flex justify-between items-center text-xs font-bold p-3 bg-canvas rounded-xl border border-border-subtle">
+                <div 
+                  key={i} 
+                  onClick={() => navigate(`/repository?search=${encodeURIComponent(v.type)}`)}
+                  className="flex justify-between items-center text-xs font-bold p-3 bg-canvas rounded-xl border border-border-subtle hover:border-primary cursor-pointer transition-colors"
+                >
                   <span className="text-text-secondary truncate pr-4">{v.type}</span>
                   <span className="text-text-primary bg-card px-2 py-1 rounded shadow-sm border border-border-subtle shrink-0">{v.count} cases</span>
                 </div>
@@ -238,6 +474,7 @@ function DashboardPage() {
             </CardBody>
           </Card>
         </div>
+
 
         <div className="col-span-1 md:col-span-2 lg:col-span-4 flex flex-col gap-6">
           <Card className="flex-1 bg-primary text-white border-0 flex flex-col h-[380px]">
@@ -307,9 +544,18 @@ function DashboardPage() {
                         ) : (
                           <span className="text-[9px] font-bold bg-slate-100 text-slate-700 border border-slate-200 px-1.5 py-0.5 rounded uppercase tracking-widest">Slate Badge</span>
                         )}
-                        <button onClick={() => navigate('/inspection/SKU-104')} className="text-[10px] font-bold text-primary hover:underline flex items-center gap-1">
+                        <button 
+                          onClick={() => {
+                            if (item.text.includes('103')) navigate('/inspection/SKU-103');
+                            else if (item.text.includes('104')) navigate('/inspection/SKU-104');
+                            else if (item.text.includes('Apple') || item.text.includes('iPhone')) navigate('/inspection/SKU-107');
+                            else navigate('/inspection/SKU-101');
+                          }} 
+                          className="text-[10px] font-bold text-primary hover:underline flex items-center gap-1 cursor-pointer"
+                        >
                            Inspect <Search className="w-3 h-3" />
                         </button>
+
                       </div>
                     </div>
                   </div>
